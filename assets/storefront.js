@@ -334,7 +334,7 @@ function cartDrawer() {
 
         <div data-checkout class="fixed inset-0 z-[110] hidden items-center justify-center p-4 sm:p-6">
             <div data-checkout-close class="absolute inset-0 bg-charcoal/70 backdrop-blur-sm"></div>
-            <form id="checkout-form" class="relative bg-white rounded-[2.5rem] overflow-hidden w-full max-w-xl soft-shadow flex flex-col max-h-[90vh]">
+            <form id="checkout-form" novalidate class="relative bg-white rounded-[2.5rem] overflow-hidden w-full max-w-xl soft-shadow flex flex-col max-h-[90vh]">
                 <div class="bg-primary p-6 text-center relative">
                     <button type="button" data-checkout-close class="absolute left-4 top-4 w-8 h-8 rounded-full bg-white/20 text-white flex items-center justify-center hover:bg-white/30 transition">✕</button>
                     <h3 class="text-2xl font-extrabold text-white mb-1">خطوة أخيرة لتأكيد طلبك</h3>
@@ -357,13 +357,13 @@ function cartDrawer() {
                     <div class="space-y-5">
                         <div>
                             <label class="block text-sm font-extrabold text-charcoal mb-2">الاسم الكامل <span class="text-red-500">*</span></label>
-                            <input id="checkout-name" name="customer_name" required minlength="2" maxlength="100" class="w-full border-2 border-gray-200 focus:border-primary rounded-2xl px-5 py-4 outline-none transition bg-gray-50 focus:bg-white text-charcoal font-bold" placeholder="مثال: محمد أحمد">
+                            <input id="checkout-name" name="customer_name" class="w-full border-2 border-gray-200 focus:border-primary rounded-2xl px-5 py-4 outline-none transition bg-gray-50 focus:bg-white text-charcoal font-bold" placeholder="مثال: محمد أحمد">
                         </div>
                         <div>
                             <label class="block text-sm font-extrabold text-charcoal mb-2">رقم الجوال (للتأكيد قبل الشحن) <span class="text-red-500">*</span></label>
                             <div class="relative">
                                 <span class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 font-bold" dir="ltr">+966</span>
-                                <input id="checkout-phone" name="customer_phone" required type="tel" pattern="[0-9]{9}" class="w-full border-2 border-gray-200 focus:border-primary rounded-2xl px-5 py-4 pl-16 outline-none transition bg-gray-50 focus:bg-white text-charcoal font-bold" placeholder="5XXXXXXXX" dir="ltr">
+                                <input id="checkout-phone" name="customer_phone" type="tel" class="w-full border-2 border-gray-200 focus:border-primary rounded-2xl px-5 py-4 pl-16 outline-none transition bg-gray-50 focus:bg-white text-charcoal font-bold" placeholder="5XXXXXXXX" dir="ltr">
                             </div>
                         </div>
                     </div>
@@ -485,8 +485,11 @@ function initStorefront() {
                 errorEl.classList.remove("hidden");
                 return;
             }
-            if (!/^[0-9]{9}$/.test(phoneRaw) || !phoneRaw.startsWith("5")) {
-                errorEl.textContent = "الرجاء إدخال رقم جوال صحيح يبدأ بـ 5";
+            let phoneClean = phoneRaw.replace(/[^0-9]/g, "");
+            if (phoneClean.startsWith("966")) phoneClean = phoneClean.slice(3);
+            if (phoneClean.startsWith("0")) phoneClean = phoneClean.slice(1);
+            if (phoneClean.length !== 9 || !phoneClean.startsWith("5")) {
+                errorEl.textContent = "الرجاء إدخال رقم جوال صحيح يبدأ بـ 5 (مثال: 5XXXXXXXX)";
                 errorEl.classList.remove("hidden");
                 return;
             }
@@ -497,7 +500,7 @@ function initStorefront() {
                 return;
             }
 
-            const phone = "05" + phoneRaw.slice(1);
+            const phone = "05" + phoneClean.slice(1);
             const totalSar = cart.length * 349;
             const items = cart.map(item => ({
                 product_id: item.slug,
@@ -537,7 +540,7 @@ function initStorefront() {
                 const orderData = {
                     order_number: orderNumber,
                     customer_name: customerName,
-                    phone: "+966" + phoneRaw,
+                    phone: "+966" + phoneClean,
                     items: cart.map(item => ({ name: item.name, slug: item.slug, qty: 3, price: 349 })),
                     total_sar: totalSar,
                     created_at: new Date().toISOString()
