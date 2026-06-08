@@ -334,41 +334,43 @@ function cartDrawer() {
 
         <div data-checkout class="fixed inset-0 z-[110] hidden items-center justify-center p-4 sm:p-6">
             <div data-checkout-close class="absolute inset-0 bg-charcoal/70 backdrop-blur-sm"></div>
-            <form class="relative bg-white rounded-[2.5rem] overflow-hidden w-full max-w-xl soft-shadow flex flex-col max-h-[90vh]">
+            <form id="checkout-form" class="relative bg-white rounded-[2.5rem] overflow-hidden w-full max-w-xl soft-shadow flex flex-col max-h-[90vh]">
                 <div class="bg-primary p-6 text-center relative">
                     <button type="button" data-checkout-close class="absolute left-4 top-4 w-8 h-8 rounded-full bg-white/20 text-white flex items-center justify-center hover:bg-white/30 transition">✕</button>
                     <h3 class="text-2xl font-extrabold text-white mb-1">خطوة أخيرة لتأكيد طلبك</h3>
-                    <p class="text-sm text-cream/80 font-medium">لن تدفعي شيئاً الآن - الدفع عند الاستلام</p>
+                    <p class="text-sm text-cream/80 font-medium">لن تدفع شيئاً الآن - الدفع عند الاستلام</p>
                 </div>
                 
                 <div class="p-6 sm:p-8 overflow-y-auto">
+                    <div id="checkout-error" class="hidden bg-red-50 border border-red-200 text-red-700 rounded-2xl p-4 mb-6 text-sm font-bold text-center"></div>
+
                     <div class="bg-cream rounded-2xl p-4 mb-6 border border-primary/10 flex items-center gap-4">
                         <div class="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center text-accent">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         </div>
                         <div>
                             <p class="font-extrabold text-primary text-sm" id="checkout-item-name">جاري التجهيز...</p>
-                            <p class="text-xs text-muted mt-1 font-bold">باقة 3 قطع - الدفع عند الاستلام</p>
+                            <p class="text-xs text-muted mt-1 font-bold" id="checkout-item-detail">باقة 3 قطع - الدفع عند الاستلام</p>
                         </div>
                     </div>
 
                     <div class="space-y-5">
                         <div>
                             <label class="block text-sm font-extrabold text-charcoal mb-2">الاسم الكامل <span class="text-red-500">*</span></label>
-                            <input required class="w-full border-2 border-gray-200 focus:border-primary rounded-2xl px-5 py-4 outline-none transition bg-gray-50 focus:bg-white text-charcoal font-bold" placeholder="مثال: سارة محمد">
+                            <input id="checkout-name" name="customer_name" required minlength="2" maxlength="100" class="w-full border-2 border-gray-200 focus:border-primary rounded-2xl px-5 py-4 outline-none transition bg-gray-50 focus:bg-white text-charcoal font-bold" placeholder="مثال: محمد أحمد">
                         </div>
                         <div>
                             <label class="block text-sm font-extrabold text-charcoal mb-2">رقم الجوال (للتأكيد قبل الشحن) <span class="text-red-500">*</span></label>
                             <div class="relative">
                                 <span class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 font-bold" dir="ltr">+966</span>
-                                <input required type="tel" pattern="[0-9]*" class="w-full border-2 border-gray-200 focus:border-primary rounded-2xl px-5 py-4 pl-16 outline-none transition bg-gray-50 focus:bg-white text-charcoal font-bold" placeholder="5XXXXXXXX" dir="ltr">
+                                <input id="checkout-phone" name="customer_phone" required type="tel" pattern="[0-9]{9}" class="w-full border-2 border-gray-200 focus:border-primary rounded-2xl px-5 py-4 pl-16 outline-none transition bg-gray-50 focus:bg-white text-charcoal font-bold" placeholder="5XXXXXXXX" dir="ltr">
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="p-6 sm:p-8 bg-gray-50 border-t border-gray-100">
-                    <button type="submit" class="w-full bg-primary text-cream font-extrabold text-xl py-5 rounded-2xl hover:bg-primary/90 transition shadow-xl flex items-center justify-center gap-3">
+                    <button type="submit" id="checkout-submit-btn" class="w-full bg-primary text-cream font-extrabold text-xl py-5 rounded-2xl hover:bg-primary/90 transition shadow-xl flex items-center justify-center gap-3">
                         تأكيد الطلب 
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                     </button>
@@ -459,6 +461,105 @@ function initStorefront() {
     });
 
     renderCart();
+
+    const API_BASE = window.MYMIZAN_API_URL || "https://api.mymizan.shop";
+
+    const checkoutForm = document.getElementById("checkout-form");
+    if (checkoutForm) {
+        checkoutForm.addEventListener("submit", async function(e) {
+            e.preventDefault();
+
+            const errorEl = document.getElementById("checkout-error");
+            const submitBtn = document.getElementById("checkout-submit-btn");
+            const nameInput = document.getElementById("checkout-name");
+            const phoneInput = document.getElementById("checkout-phone");
+
+            errorEl.classList.add("hidden");
+            errorEl.textContent = "";
+
+            const customerName = nameInput.value.trim();
+            const phoneRaw = phoneInput.value.trim().replace(/\s+/g, "");
+
+            if (!customerName || customerName.length < 2) {
+                errorEl.textContent = "الرجاء إدخال الاسم الكامل";
+                errorEl.classList.remove("hidden");
+                return;
+            }
+            if (!/^[0-9]{9}$/.test(phoneRaw) || !phoneRaw.startsWith("5")) {
+                errorEl.textContent = "الرجاء إدخال رقم جوال صحيح يبدأ بـ 5";
+                errorEl.classList.remove("hidden");
+                return;
+            }
+
+            if (cart.length === 0) {
+                errorEl.textContent = "السلة فارغة";
+                errorEl.classList.remove("hidden");
+                return;
+            }
+
+            const phone = "05" + phoneRaw.slice(1);
+            const totalSar = cart.length * 349;
+            const items = cart.map(item => ({
+                product_id: item.slug,
+                quantity: 3,
+                offer_price_sar: 349,
+                is_upsell: false
+            }));
+
+            const orderPayload = {
+                customer: { name: customerName, phone: phone },
+                items: items,
+                totals: { subtotal_sar: totalSar, total_sar: totalSar, currency: "SAR" },
+                payment_method: "cod",
+                event_ids: {},
+                attribution: {
+                    landing_page_url: window.location.href,
+                    referrer: document.referrer || "",
+                    utm_source: new URLSearchParams(window.location.search).get("utm_source") || "",
+                    utm_medium: new URLSearchParams(window.location.search).get("utm_medium") || "",
+                    utm_campaign: new URLSearchParams(window.location.search).get("utm_campaign") || ""
+                }
+            };
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<svg class="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> جاري تأكيد الطلب...';
+
+            try {
+                const response = await fetch(API_BASE + "/api/orders", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(orderPayload)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.detail || data.message_ar || "حدث خطأ أثناء تسجيل الطلب");
+                }
+
+                const orderData = {
+                    order_number: data.order_number,
+                    customer_name: customerName,
+                    phone: "+966" + phoneRaw,
+                    items: cart.map(item => ({ name: item.name, slug: item.slug, qty: 3, price: 349 })),
+                    total_sar: totalSar,
+                    created_at: new Date().toISOString()
+                };
+                sessionStorage.setItem("mymizan_order", JSON.stringify(orderData));
+
+                cart = [];
+                renderCart();
+
+                window.location.href = "/thank-you?order=" + encodeURIComponent(data.order_number);
+
+            } catch (err) {
+                errorEl.textContent = err.message || "حدث خطأ غير متوقع. حاول مرة أخرى.";
+                errorEl.classList.remove("hidden");
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'تأكيد الطلب <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+            }
+        });
+    }
 }
 
 document.addEventListener("DOMContentLoaded", initStorefront);

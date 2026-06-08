@@ -88,12 +88,30 @@
             <p class="text-lg lg:text-xl text-charcoal leading-9 max-w-xl mx-auto">شكراً لثقتك في ميزاني. سيتم التواصل معك قريباً لتأكيد الطلب.</p>
         </section>
 
-        <!-- Order Number (populated dynamically) -->
+        <!-- Order Summary Card -->
         <section class="mb-8 fade-in-up delay-1">
-            <div class="bg-white rounded-[2rem] p-6 sm:p-8 soft-shadow border border-primary/10 text-center">
-                <p class="text-sm font-bold text-muted mb-2">رقم الطلب</p>
-                <p id="order-number" class="text-2xl lg:text-3xl font-extrabold text-primary tracking-wide">MYM-000000</p>
-                <p class="text-sm text-muted mt-3">احتفظ بهذا الرقم للمتابعة</p>
+            <div class="bg-white rounded-[2rem] p-6 sm:p-8 soft-shadow border border-primary/10">
+                <div class="text-center mb-6">
+                    <p class="text-sm font-bold text-muted mb-2">رقم الطلب</p>
+                    <p id="order-number" class="text-2xl lg:text-3xl font-extrabold text-primary tracking-wide">MYM-000000</p>
+                </div>
+
+                <div class="border-t border-primary/10 pt-5 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-bold text-muted">اسم العميل</span>
+                        <span id="order-customer-name" class="font-extrabold text-charcoal">-</span>
+                    </div>
+                    <div id="order-products-list" class="space-y-3"></div>
+                    <div class="border-t border-dashed border-primary/15 pt-4 flex justify-between items-center">
+                        <span class="font-extrabold text-primary text-lg">الإجمالي</span>
+                        <span id="order-total" class="font-extrabold text-primary text-xl">-</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-bold text-muted">طريقة الدفع</span>
+                        <span class="text-sm font-extrabold text-success">الدفع عند الاستلام</span>
+                    </div>
+                </div>
+                <p class="text-sm text-muted mt-5 text-center">احتفظ بهذا الرقم للمتابعة</p>
             </div>
         </section>
 
@@ -246,6 +264,37 @@
             const orderNumber = params.get('order') || params.get('order_number');
             if (orderNumber) {
                 document.getElementById('order-number').textContent = orderNumber;
+            }
+
+            let orderData = null;
+            try {
+                const raw = sessionStorage.getItem('mymizan_order');
+                if (raw) orderData = JSON.parse(raw);
+            } catch(e) {}
+
+            if (orderData) {
+                if (orderData.order_number) {
+                    document.getElementById('order-number').textContent = orderData.order_number;
+                }
+                if (orderData.customer_name) {
+                    document.getElementById('order-customer-name').textContent = orderData.customer_name;
+                }
+                if (orderData.total_sar) {
+                    document.getElementById('order-total').textContent = orderData.total_sar + ' ريال';
+                }
+
+                const listEl = document.getElementById('order-products-list');
+                if (listEl && orderData.items && orderData.items.length > 0) {
+                    listEl.innerHTML = orderData.items.map(function(item) {
+                        return '<div class="flex justify-between items-center bg-cream rounded-xl px-4 py-3 border border-primary/5">' +
+                            '<div>' +
+                                '<p class="font-bold text-charcoal text-sm">' + item.name + '</p>' +
+                                '<p class="text-xs text-muted mt-0.5">' + item.qty + ' قطع</p>' +
+                            '</div>' +
+                            '<span class="font-extrabold text-primary text-sm">' + item.price + ' ريال</span>' +
+                        '</div>';
+                    }).join('');
+                }
             }
         })();
     </script>
