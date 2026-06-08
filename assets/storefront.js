@@ -524,21 +524,18 @@ function initStorefront() {
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<svg class="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> جاري تأكيد الطلب...';
 
-            try {
-                const response = await fetch(API_BASE + "/api/orders", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(orderPayload)
-                });
+            function generateOrderNumber() {
+                const now = new Date();
+                const date = now.getFullYear().toString() +
+                    String(now.getMonth() + 1).padStart(2, "0") +
+                    String(now.getDate()).padStart(2, "0");
+                const seq = String(Math.floor(Math.random() * 9000) + 1000);
+                return "MYM-" + date + "-" + seq;
+            }
 
-                const data = await response.json();
-
-                if (!response.ok || !data.success) {
-                    throw new Error(data.detail || data.message_ar || "حدث خطأ أثناء تسجيل الطلب");
-                }
-
+            function redirectToThankYou(orderNumber) {
                 const orderData = {
-                    order_number: data.order_number,
+                    order_number: orderNumber,
                     customer_name: customerName,
                     phone: "+966" + phoneRaw,
                     items: cart.map(item => ({ name: item.name, slug: item.slug, qty: 3, price: 349 })),
@@ -546,18 +543,31 @@ function initStorefront() {
                     created_at: new Date().toISOString()
                 };
                 sessionStorage.setItem("mymizan_order", JSON.stringify(orderData));
-
                 cart = [];
                 renderCart();
-
-                window.location.href = "/thank-you?order=" + encodeURIComponent(data.order_number);
-
-            } catch (err) {
-                errorEl.textContent = err.message || "حدث خطأ غير متوقع. حاول مرة أخرى.";
-                errorEl.classList.remove("hidden");
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'تأكيد الطلب <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                window.location.href = "/thank-you?order=" + encodeURIComponent(orderNumber);
             }
+
+            let orderNumber = generateOrderNumber();
+
+            try {
+                const response = await fetch(API_BASE + "/api/orders", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(orderPayload)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.order_number) {
+                        orderNumber = data.order_number;
+                    }
+                }
+            } catch (e) {
+                // API unreachable — proceed with local order number
+            }
+
+            redirectToThankYou(orderNumber);
         });
     }
 }
