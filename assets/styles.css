@@ -28,6 +28,37 @@ body {
     transform: translateY(-3px);
 }
 
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+label.offer-card:has(input.offer-radio:checked) {
+    border-width: 2px;
+    border-color: #17463a;
+    background: rgba(23, 70, 58, 0.05);
+    box-shadow: 0 28px 80px rgba(201, 143, 106, 0.22);
+}
+
+label.offer-card:has(input.offer-radio:checked) .offer-radio-ring {
+    border-color: #17463a;
+}
+
+label.offer-card:has(input.offer-radio:checked) .offer-radio-dot {
+    display: block;
+}
+
+label.offer-card:has(input.offer-radio:checked) .offer-note {
+    color: #2f7d57;
+}
+
 .sticky-cta {
     backdrop-filter: blur(18px);
 }

@@ -101,10 +101,48 @@ const products = {
 };
 
 const offers = [
-    { qty: "قطعة واحدة", note: "للتجربة المبدئية", price: "199 ريال", selected: false },
-    { qty: "قطعتين", note: "اختيار ذكي - وفر 119 ريال", price: "279 ريال", selected: false },
-    { qty: "3 قطع", note: "الأكثر توفيرا - وفر 248 ريال (الروتين الكامل)", price: "349 ريال", selected: true }
+    { qty: "قطعة واحدة", numericQty: 1, note: "للتجربة المبدئية", price: "199 ريال", numericPrice: 199 },
+    { qty: "قطعتين", numericQty: 2, note: "اختيار ذكي - وفر 119 ريال", price: "279 ريال", numericPrice: 279 },
+    { qty: "3 قطع", numericQty: 3, note: "الأكثر توفيرا - وفر 248 ريال (الروتين الكامل)", price: "349 ريال", numericPrice: 349 }
 ];
+
+window.selectedOffers = {};
+
+function getSelectedOffer(slug) {
+    if (window.selectedOffers[slug] !== undefined) {
+        return window.selectedOffers[slug];
+    }
+    const checked = document.querySelector('input.offer-radio[data-offer-slug="' + slug + '"]:checked');
+    if (checked) {
+        return Number(checked.value);
+    }
+    return 2; // Default to 3 pieces
+}
+
+function offerDebugLog(step, data) {
+    console.log("[OFFER-DEBUG]", step, data);
+}
+
+function syncOfferRadios(slug) {
+    offerDebugLog("syncOfferRadios:start", {
+        slug: slug,
+        selectedOffersState: window.selectedOffers[slug],
+        getSelectedOffer: getSelectedOffer(slug)
+    });
+    document.querySelectorAll('.offers-container[data-slug="' + slug + '"]').forEach(function(container) {
+        container.innerHTML = renderOffersList(slug, container.dataset.containerId || "main");
+    });
+    offerDebugLog("syncOfferRadios:end", {
+        slug: slug,
+        selectedOffersState: window.selectedOffers[slug],
+        getSelectedOffer: getSelectedOffer(slug),
+        checkedRadios: Array.from(document.querySelectorAll('input.offer-radio[data-offer-slug="' + slug + '"]:checked')).map(function(r) {
+            return { value: r.value, name: r.name };
+        })
+    });
+}
+
+window.syncOfferRadios = syncOfferRadios;
 
 function routePrefix() {
     return window.location.pathname.includes("/products/") ? "../.." : ".";
@@ -178,11 +216,53 @@ function packMockup(product) {
     `;
 }
 
-function offerSelector(slug) {
+window.selectOffer = function(slug, index) {
+    index = Number(index);
+    if (Number.isNaN(index) || index < 0 || index > 2) return;
+    window.selectedOffers[slug] = index;
+    syncOfferRadios(slug);
+};
+
+function renderOffersList(slug, containerId) {
+    const activeIdx = getSelectedOffer(slug);
+
+    return offers.map(function(offer, index) {
+        const isSelected = index === activeIdx;
+        const badge = index === 2
+            ? '<div class="absolute -top-3 left-6 bg-accent text-white text-[11px] px-4 py-1 rounded-full font-extrabold shadow-md tracking-wide pointer-events-none z-10">🔥 الأكثر توفيراً وطلباً</div>'
+            : "";
+        const strikePrice = index > 0
+            ? '<span class="block text-[10px] text-muted line-through mt-1">' + (index === 1 ? "398 ريال" : "597 ريال") + "</span>"
+            : "";
+
+        return (
+            '<label class="offer-card flex items-center justify-between gap-4 p-5 rounded-2xl border border-primary/10 bg-gray-50/50 cursor-pointer transition-all duration-300 relative group hover:border-primary/30">' +
+                '<input type="radio" class="offer-radio sr-only" name="offer-' + slug + '-' + containerId + '" value="' + index + '" data-offer-slug="' + slug + '"' + (isSelected ? ' checked' : '') + '>' +
+                badge +
+                '<div class="flex items-center gap-4">' +
+                    '<div class="offer-radio-ring w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center shrink-0">' +
+                        '<div class="offer-radio-dot w-3 h-3 rounded-full bg-primary hidden"></div>' +
+                    "</div>" +
+                    "<div>" +
+                        '<span class="block font-extrabold text-charcoal text-lg">' + offer.qty + "</span>" +
+                        '<span class="offer-note block text-xs font-bold mt-1 text-muted">' + offer.note + "</span>" +
+                    "</div>" +
+                "</div>" +
+                '<div class="text-left">' +
+                    '<span class="block font-extrabold text-primary text-xl">' + offer.price + "</span>" +
+                    strikePrice +
+                "</div>" +
+            "</label>"
+        );
+    }).join("");
+}
+
+window.offerSelector = function(slug) {
+    const containerId = Math.random().toString(36).substring(2, 9);
     return `
-        <div class="bg-white rounded-[2rem] p-6 sm:p-8 soft-shadow border border-primary/10 relative overflow-hidden">
+        <div class="bg-white rounded-[2rem] p-6 sm:p-8 soft-shadow border border-primary/10 relative" id="offer-selector-container-${containerId}">
             <!-- Decorative accent -->
-            <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-10 -mt-10"></div>
+            <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
             
             <div class="relative z-10">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
@@ -196,30 +276,11 @@ function offerSelector(slug) {
                     </span>
                 </div>
                 
-                <div class="space-y-4">
-                    ${offers.map((offer, index) => `
-                        <label class="offer-card flex items-center justify-between gap-4 p-5 rounded-2xl ${offer.selected ? "border-2 border-primary bg-primary/5 glow-shadow" : "border border-primary/10 bg-gray-50/50"} cursor-pointer transition-all duration-300 relative group hover:border-primary/30">
-                            ${index === 2 ? '<div class="absolute -top-3 left-6 bg-accent text-white text-[11px] px-4 py-1 rounded-full font-extrabold shadow-md tracking-wide">🔥 الأكثر توفيراً وطلباً</div>' : ""}
-                            
-                            <div class="flex items-center gap-4">
-                                <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${offer.selected ? 'border-primary' : 'border-gray-300 group-hover:border-primary/50'}">
-                                    ${offer.selected ? '<div class="w-3 h-3 rounded-full bg-primary"></div>' : ''}
-                                </div>
-                                <input type="radio" name="bundle" ${offer.selected ? "checked" : ""} class="hidden">
-                                <div>
-                                    <span class="block font-extrabold text-charcoal text-lg">${offer.qty}</span>
-                                    <span class="block text-xs font-bold mt-1 ${offer.selected ? 'text-success' : 'text-muted'}">${offer.note}</span>
-                                </div>
-                            </div>
-                            <div class="text-left">
-                                <span class="block font-extrabold text-primary text-xl">${offer.price}</span>
-                                ${index > 0 ? `<span class="block text-[10px] text-muted line-through mt-1">${index === 1 ? '398 ريال' : '597 ريال'}</span>` : ''}
-                            </div>
-                        </label>
-                    `).join("")}
+                <div class="space-y-4 offers-container" data-slug="${slug}" data-container-id="${containerId}">
+                    ${renderOffersList(slug, containerId)}
                 </div>
                 
-                <button data-add-product="${slug}" class="w-full bg-primary text-cream font-extrabold text-xl py-5 rounded-2xl mt-8 hover:bg-primary/90 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 flex items-center justify-center gap-2 group">
+                <button onclick="window.handleAddProduct('${slug}')" class="w-full bg-primary text-cream font-extrabold text-xl py-5 rounded-2xl mt-8 hover:bg-primary/90 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 flex items-center justify-center gap-2 group relative z-20">
                     أضف للسلة واطلب الآن
                     <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 </button>
@@ -232,7 +293,7 @@ function offerSelector(slug) {
             </div>
         </div>
     `;
-}
+};
 
 function footer() {
     return `
@@ -395,12 +456,18 @@ function initStorefront() {
     const itemsEl = document.querySelector("[data-cart-items]");
     const totalEl = document.querySelector("[data-cart-total]");
 
+    // Global function to remove cart items
+    window.removeItemFromCart = function(idx) {
+        cart.splice(idx, 1);
+        renderCart();
+    };
+
     function renderCart() {
         countEls.forEach(el => el.textContent = String(cart.length));
         if (!itemsEl) return;
         
-        let total = cart.length > 0 ? 349 * cart.length : 0; // Simplified for demo
-        if (totalEl) totalEl.textContent = `${total} ريال`;
+        let total = cart.reduce((sum, item) => sum + (item.offer ? item.offer.numericPrice : 0), 0);
+        if (totalEl) totalEl.textContent = total + ' ريال';
 
         itemsEl.innerHTML = cart.length
             ? cart.map((item, idx) => `
@@ -410,10 +477,10 @@ function initStorefront() {
                     </div>
                     <div class="flex-1">
                         <p class="font-extrabold text-primary text-sm leading-tight mb-1">${item.name}</p>
-                        <p class="text-xs text-accent font-bold mb-2">الباقة الأكثر توفيراً (3 قطع)</p>
+                        <p class="text-xs text-accent font-bold mb-2">${item.offer ? 'باقة ' + item.offer.qty + ' - ' + item.offer.note : ''}</p>
                         <div class="flex justify-between items-center">
-                            <span class="font-extrabold text-charcoal">349 ريال</span>
-                            <button class="text-xs text-red-400 font-bold hover:text-red-600 underline" onclick="event.stopPropagation();">حذف</button>
+                            <span class="font-extrabold text-charcoal">${item.offer ? item.offer.price : ''}</span>
+                            <button type="button" class="text-xs text-red-400 font-bold hover:text-red-600 underline" onclick="window.removeItemFromCart(${idx}); event.stopPropagation();">حذف</button>
                         </div>
                     </div>
                 </div>
@@ -430,18 +497,36 @@ function initStorefront() {
             
         // Update checkout item name
         const checkoutItemName = document.getElementById('checkout-item-name');
+        const checkoutItemDetail = document.getElementById('checkout-item-detail');
         if (checkoutItemName && cart.length > 0) {
-            checkoutItemName.textContent = cart[cart.length - 1].name;
+            const lastItem = cart[cart.length - 1];
+            checkoutItemName.textContent = lastItem.name;
+            if (checkoutItemDetail && lastItem.offer) {
+                checkoutItemDetail.textContent = 'باقة ' + lastItem.offer.qty + ' - الدفع عند الاستلام';
+            }
         }
     }
 
-    document.addEventListener("click", (event) => {
-        const addButton = event.target.closest("[data-add-product]");
-        if (addButton) {
-            cart.push(products[addButton.dataset.addProduct]);
+    window.handleAddProduct = function(slug) {
+        const product = products[slug];
+        if (product) {
+            cart.push({
+                ...product,
+                offer: offers[getSelectedOffer(slug)]
+            });
             renderCart();
-            cartEl?.classList.remove("hidden");
+            const cartEl = document.querySelector("[data-cart]");
+            if (cartEl) cartEl.classList.remove("hidden");
         }
+    };
+
+    document.body.addEventListener("click", (event) => {
+        const addProductBtn = event.target.closest("[data-add-product]");
+        if (addProductBtn) {
+            window.handleAddProduct(addProductBtn.dataset.addProduct);
+            return;
+        }
+
         if (event.target.closest("[data-cart-open]")) {
             cartEl?.classList.remove("hidden");
         }
@@ -501,11 +586,11 @@ function initStorefront() {
             }
 
             const phone = "05" + phoneClean.slice(1);
-            const totalSar = cart.length * 349;
+            const totalSar = cart.reduce((sum, item) => sum + (item.offer ? item.offer.numericPrice : 0), 0);
             const items = cart.map(item => ({
                 product_id: item.slug,
-                quantity: 3,
-                offer_price_sar: 349,
+                quantity: item.offer ? item.offer.numericQty : 1,
+                offer_price_sar: item.offer ? item.offer.numericPrice : 0,
                 is_upsell: false
             }));
 
@@ -541,7 +626,12 @@ function initStorefront() {
                     order_number: orderNumber,
                     customer_name: customerName,
                     phone: "+966" + phoneClean,
-                    items: cart.map(item => ({ name: item.name, slug: item.slug, qty: 3, price: 349 })),
+                    items: cart.map(item => ({ 
+                        name: item.name, 
+                        slug: item.slug, 
+                        qty: item.offer ? item.offer.numericQty : 1, 
+                        price: item.offer ? item.offer.numericPrice : 0 
+                    })),
                     total_sar: totalSar,
                     created_at: new Date().toISOString()
                 };
@@ -575,4 +665,65 @@ function initStorefront() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", initStorefront);
+document.addEventListener("click", function(event) {
+    const label = event.target.closest("label.offer-card");
+    if (!label) return;
+    const radio = label.querySelector('input.offer-radio[type="radio"]');
+    offerDebugLog("click:offer-card", {
+        clickedOfferValue: radio ? radio.value : null,
+        clickedOfferPrice: label.querySelector(".text-primary.text-xl") ? label.querySelector(".text-primary.text-xl").textContent.trim() : null,
+        selectedOfferBeforeClick: radio && radio.dataset.offerSlug ? getSelectedOffer(radio.dataset.offerSlug) : null,
+        radioCheckedBeforeClick: radio ? radio.checked : null,
+        targetTag: event.target.tagName,
+        slug: radio ? radio.dataset.offerSlug : null
+    });
+}, true);
+
+document.addEventListener("change", function(event) {
+    const radio = event.target;
+    offerDebugLog("change:event-received", {
+        targetTag: radio ? radio.tagName : null,
+        targetType: radio ? radio.type : null,
+        targetClass: radio && radio.className ? radio.className : null,
+        matchesOfferRadio: !!(radio && radio.matches && radio.matches('input.offer-radio[type="radio"]'))
+    });
+    if (!radio || !radio.matches || !radio.matches('input.offer-radio[type="radio"]')) return;
+    const slug = radio.dataset.offerSlug;
+    const index = Number(radio.value);
+    const before = getSelectedOffer(slug);
+    offerDebugLog("change:offer-radio", {
+        clickedOfferValue: radio.value,
+        selectedOfferBeforeClick: before,
+        slug: slug
+    });
+    if (!slug || Number.isNaN(index)) {
+        offerDebugLog("change:aborted", { reason: "missing slug or invalid index", slug: slug, index: index });
+        return;
+    }
+    window.selectedOffers[slug] = index;
+    offerDebugLog("change:state-updated", {
+        clickedOfferValue: radio.value,
+        selectedOfferAfterClick: window.selectedOffers[slug]
+    });
+    syncOfferRadios(slug);
+    offerDebugLog("change:complete", {
+        clickedOfferValue: radio.value,
+        selectedOfferAfterClick: getSelectedOffer(slug),
+        activeLabels: Array.from(document.querySelectorAll('label.offer-card')).filter(function(label) {
+            return !!label.querySelector('input.offer-radio:checked');
+        }).map(function(label) {
+            return label.querySelector(".text-primary.text-xl") ? label.querySelector(".text-primary.text-xl").textContent.trim() : null;
+        })
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    offerDebugLog("storefront:DOMContentLoaded", {
+        storefrontJsLoaded: true,
+        hasChangeListener: true,
+        hasSyncOfferRadios: typeof window.syncOfferRadios === "function"
+    });
+    initStorefront();
+});
+
+offerDebugLog("storefront:script-parsed", { line: "storefront.js executed successfully" });

@@ -283,5 +283,28 @@ function renderProductPage(slug) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    renderProductPage(document.body.dataset.productSlug);
+    const slug = document.body.dataset.productSlug;
+    console.log("[OFFER-DEBUG] product-page:DOMContentLoaded", {
+        slug: slug,
+        offerCardCountBeforeRender: document.querySelectorAll("label.offer-card").length
+    });
+    renderProductPage(slug);
+    console.log("[OFFER-DEBUG] product-page:after-render", {
+        slug: slug,
+        offerCardCount: document.querySelectorAll("label.offer-card").length,
+        offerRadioCount: document.querySelectorAll("input.offer-radio").length,
+        checkedRadios: Array.from(document.querySelectorAll("input.offer-radio:checked")).map((r) => ({
+            value: r.value,
+            name: r.name,
+            slug: r.dataset.offerSlug
+        }))
+    });
+    if (slug && window.syncOfferRadios) {
+        window.syncOfferRadios(slug);
+    }
+    console.log("[OFFER-DEBUG] product-page:after-sync", {
+        slug: slug,
+        selectedOffer: window.getSelectedOffer ? window.getSelectedOffer(slug) : "getSelectedOffer not exposed",
+        selectedOffersState: window.selectedOffers ? window.selectedOffers[slug] : undefined
+    });
 });
