@@ -550,11 +550,11 @@ function initStorefront() {
     const API_BASE = window.MYMIZAN_API_URL || "https://api.mymizan.shop";
 
     const checkoutForm = document.getElementById("checkout-form");
-    console.log("[OFFER-DEBUG] initStorefront: checkout-form found =", !!checkoutForm);
+    console.log("[ORDER-DEBUG] step-1 checkout form lookup", { found: !!checkoutForm });
     if (checkoutForm) {
         checkoutForm.addEventListener("submit", async function(e) {
             e.preventDefault();
-            console.log("[OFFER-DEBUG] checkout-form: submit event fired");
+            console.log("[ORDER-DEBUG] step-2 submit event fired");
 
             const errorEl = document.getElementById("checkout-error");
             const submitBtn = document.getElementById("checkout-submit-btn");
@@ -566,11 +566,16 @@ function initStorefront() {
 
             const customerName = nameInput.value.trim();
             const phoneRaw = phoneInput.value.trim().replace(/\s+/g, "");
+            console.log("[ORDER-DEBUG] step-3 raw form values read", {
+                hasName: !!customerName,
+                phoneRaw: phoneRaw,
+                cartItems: cart.length
+            });
 
             if (!customerName || customerName.length < 2) {
                 errorEl.textContent = "الرجاء إدخال الاسم الكامل";
                 errorEl.classList.remove("hidden");
-                console.log("[OFFER-DEBUG] checkout-form: validation failed on name");
+                console.log("[ORDER-DEBUG] stop-1 validation failed: name");
                 return;
             }
             let phoneClean = phoneRaw.replace(/[^0-9]/g, "");
@@ -579,47 +584,38 @@ function initStorefront() {
             if (phoneClean.length !== 9 || !phoneClean.startsWith("5")) {
                 errorEl.textContent = "الرجاء إدخال رقم جوال صحيح يبدأ بـ 5 (مثال: 5XXXXXXXX)";
                 errorEl.classList.remove("hidden");
-                console.log("[OFFER-DEBUG] checkout-form: validation failed on phone");
+                console.log("[ORDER-DEBUG] stop-2 validation failed: phone", { phoneClean: phoneClean });
                 return;
             }
 
             if (cart.length === 0) {
                 errorEl.textContent = "السلة فارغة";
                 errorEl.classList.remove("hidden");
-                console.log("[OFFER-DEBUG] checkout-form: validation failed on empty cart");
+                console.log("[ORDER-DEBUG] stop-3 validation failed: empty cart");
                 return;
             }
 
-            console.log("[OFFER-DEBUG] checkout-form: validation passed, building payload");
+            console.log("[ORDER-DEBUG] step-4 validation passed");
 
             const phone = "05" + phoneClean.slice(1);
             const totalSar = cart.reduce((sum, item) => sum + (item.offer ? item.offer.numericPrice : 0), 0);
+            
+            // Fixed payload to match Backend OrderCreateIn schema
             const items = cart.map(item => ({
                 product_slug: item.slug,
-                quantity: item.offer ? item.offer.numericQty : 1,
-                offer_price_sar: item.offer ? item.offer.numericPrice : 0,
-                is_upsell: false
+                quantity: item.offer ? item.offer.numericQty : 1
             }));
 
             const orderPayload = {
                 customer_name: customerName,
                 phone: phone,
-                city: "السعودية", // Mock city since it's not collected but required by backend
-                subtotal: totalSar,
-                total: totalSar,
+                city: "غير محدد", // Required by backend schema
                 items: items,
-                payment_method: "cod",
-                event_ids: {},
-                attribution: {
-                    landing_page_url: window.location.href,
-                    referrer: document.referrer || "",
-                    utm_source: new URLSearchParams(window.location.search).get("utm_source") || "",
-                    utm_medium: new URLSearchParams(window.location.search).get("utm_medium") || "",
-                    utm_campaign: new URLSearchParams(window.location.search).get("utm_campaign") || ""
-                }
+                subtotal: totalSar,
+                total: totalSar
             };
 
-            console.log("[OFFER-DEBUG] checkout-form: sending fetch request to", API_BASE + "/orders", orderPayload);
+            console.log("[ORDER-DEBUG] step-5 payload built", orderPayload);
 
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<svg class="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> جاري تأكيد الطلب...';
@@ -655,29 +651,46 @@ function initStorefront() {
 
             let orderNumber = generateOrderNumber();
 
+            // Use the correct backend URL if testing locally
+            const endpoint = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && !window.MYMIZAN_API_URL 
+                ? "http://localhost:8000/orders" 
+                : API_BASE + "/orders";
+            console.log("[ORDER-DEBUG] step-6 fetch about to start", { endpoint: endpoint });
+
             try {
-                const response = await fetch(API_BASE + "/orders", {
+                const response = await fetch(endpoint, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(orderPayload)
                 });
-                console.log("[OFFER-DEBUG] Fetch response status:", response.status);
+                
+                console.log("[ORDER-DEBUG] step-7 fetch response received", { status: response.status, ok: response.ok });
 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log("[OFFER-DEBUG] Fetch response data:", data);
+                    console.log("[ORDER-DEBUG] step-8 response json parsed", data);
                     if (data.success && data.order_number) {
                         orderNumber = data.order_number;
                     }
                 } else {
                     const errText = await response.text();
-                    console.log("[OFFER-DEBUG] Fetch error body:", errText);
+                    console.error("[ORDER-DEBUG] stop-4 backend returned non-OK", { status: response.status, body: errText });
+                    errorEl.textContent = "حدث خطأ أثناء تأكيد الطلب (الرمز " + response.status + "). يرجى المحاولة مرة أخرى.";
+                    errorEl.classList.remove("hidden");
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'تأكيد الطلب <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                    return; // Prevent redirect to see error
                 }
             } catch (e) {
-                console.error("[OFFER-DEBUG] Fetch exception:", e);
-                // API unreachable — proceed with local order number
+                console.error("[ORDER-DEBUG] stop-5 fetch threw before response", e);
+                errorEl.textContent = "خطأ في الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت وتأكد أن السيرفر يعمل.";
+                errorEl.classList.remove("hidden");
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'تأكيد الطلب <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                return; // Prevent redirect to see error
             }
 
+            console.log("[ORDER-DEBUG] step-9 redirecting after successful order", { orderNumber: orderNumber });
             redirectToThankYou(orderNumber);
         });
     }
