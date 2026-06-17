@@ -550,9 +550,11 @@ function initStorefront() {
     const API_BASE = window.MYMIZAN_API_URL || "https://api.mymizan.shop";
 
     const checkoutForm = document.getElementById("checkout-form");
+    console.log("[OFFER-DEBUG] initStorefront: checkout-form found =", !!checkoutForm);
     if (checkoutForm) {
         checkoutForm.addEventListener("submit", async function(e) {
             e.preventDefault();
+            console.log("[OFFER-DEBUG] checkout-form: submit event fired");
 
             const errorEl = document.getElementById("checkout-error");
             const submitBtn = document.getElementById("checkout-submit-btn");
@@ -568,6 +570,7 @@ function initStorefront() {
             if (!customerName || customerName.length < 2) {
                 errorEl.textContent = "الرجاء إدخال الاسم الكامل";
                 errorEl.classList.remove("hidden");
+                console.log("[OFFER-DEBUG] checkout-form: validation failed on name");
                 return;
             }
             let phoneClean = phoneRaw.replace(/[^0-9]/g, "");
@@ -576,28 +579,35 @@ function initStorefront() {
             if (phoneClean.length !== 9 || !phoneClean.startsWith("5")) {
                 errorEl.textContent = "الرجاء إدخال رقم جوال صحيح يبدأ بـ 5 (مثال: 5XXXXXXXX)";
                 errorEl.classList.remove("hidden");
+                console.log("[OFFER-DEBUG] checkout-form: validation failed on phone");
                 return;
             }
 
             if (cart.length === 0) {
                 errorEl.textContent = "السلة فارغة";
                 errorEl.classList.remove("hidden");
+                console.log("[OFFER-DEBUG] checkout-form: validation failed on empty cart");
                 return;
             }
+
+            console.log("[OFFER-DEBUG] checkout-form: validation passed, building payload");
 
             const phone = "05" + phoneClean.slice(1);
             const totalSar = cart.reduce((sum, item) => sum + (item.offer ? item.offer.numericPrice : 0), 0);
             const items = cart.map(item => ({
-                product_id: item.slug,
+                product_slug: item.slug,
                 quantity: item.offer ? item.offer.numericQty : 1,
                 offer_price_sar: item.offer ? item.offer.numericPrice : 0,
                 is_upsell: false
             }));
 
             const orderPayload = {
-                customer: { name: customerName, phone: phone },
+                customer_name: customerName,
+                phone: phone,
+                city: "السعودية", // Mock city since it's not collected but required by backend
+                subtotal: totalSar,
+                total: totalSar,
                 items: items,
-                totals: { subtotal_sar: totalSar, total_sar: totalSar, currency: "SAR" },
                 payment_method: "cod",
                 event_ids: {},
                 attribution: {
@@ -608,6 +618,8 @@ function initStorefront() {
                     utm_campaign: new URLSearchParams(window.location.search).get("utm_campaign") || ""
                 }
             };
+
+            console.log("[OFFER-DEBUG] checkout-form: sending fetch request to", API_BASE + "/orders", orderPayload);
 
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<svg class="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> جاري تأكيد الطلب...';
@@ -644,19 +656,25 @@ function initStorefront() {
             let orderNumber = generateOrderNumber();
 
             try {
-                const response = await fetch(API_BASE + "/api/orders", {
+                const response = await fetch(API_BASE + "/orders", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(orderPayload)
                 });
+                console.log("[OFFER-DEBUG] Fetch response status:", response.status);
 
                 if (response.ok) {
                     const data = await response.json();
+                    console.log("[OFFER-DEBUG] Fetch response data:", data);
                     if (data.success && data.order_number) {
                         orderNumber = data.order_number;
                     }
+                } else {
+                    const errText = await response.text();
+                    console.log("[OFFER-DEBUG] Fetch error body:", errText);
                 }
             } catch (e) {
+                console.error("[OFFER-DEBUG] Fetch exception:", e);
                 // API unreachable — proceed with local order number
             }
 
