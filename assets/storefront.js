@@ -547,7 +547,8 @@ function initStorefront() {
 
     renderCart();
 
-    const API_BASE = window.MYMIZAN_API_URL || "https://api.mymizan.shop";
+    const configuredApiUrl = typeof window.MYMIZAN_API_URL === "string" ? window.MYMIZAN_API_URL.trim() : "";
+    const API_BASE = (configuredApiUrl || "https://api.mymizan.shop").replace(/\/+$/, "");
 
     const checkoutForm = document.getElementById("checkout-form");
     console.log("[ORDER-DEBUG] step-1 checkout form lookup", { found: !!checkoutForm });
@@ -652,7 +653,7 @@ function initStorefront() {
             let orderNumber = generateOrderNumber();
 
             // Use the correct backend URL if testing locally
-            const endpoint = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && !window.MYMIZAN_API_URL 
+            const endpoint = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && !configuredApiUrl
                 ? "http://localhost:8000/orders" 
                 : API_BASE + "/orders";
             console.log("[ORDER-DEBUG] step-6 fetch about to start", { endpoint: endpoint });

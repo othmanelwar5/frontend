@@ -4,6 +4,7 @@ const path = require("path");
 
 const root = process.cwd();
 const port = process.env.PORT || 3000;
+const publicApiUrl = process.env.MYMIZAN_API_URL || process.env.NEXT_PUBLIC_API_URL || "";
 
 const types = {
     ".html": "text/html; charset=utf-8",
@@ -41,6 +42,16 @@ function resolveFile(urlPath) {
 }
 
 const server = http.createServer((req, res) => {
+    const requestPath = (req.url || "/").split("?")[0];
+    if (requestPath === "/env.js") {
+        res.writeHead(200, {
+            "Content-Type": "text/javascript; charset=utf-8",
+            "Cache-Control": "no-store"
+        });
+        res.end(`window.MYMIZAN_API_URL = ${JSON.stringify(publicApiUrl)};\n`);
+        return;
+    }
+
     const file = resolveFile(req.url || "/");
     if (!file) {
         res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
