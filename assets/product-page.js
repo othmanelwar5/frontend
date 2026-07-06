@@ -17,6 +17,30 @@ function renderProductPage(slug) {
         </div>
     `;
 
+    const productGallery = (product) => {
+        const images = [
+            [product.pageImages.hero, product.name],
+            [product.pageImages.authority, `${product.name} بمعايير صيدلية`],
+            [product.pageImages.science, `مكونات ${product.name}`]
+        ];
+
+        return `
+            <div class="grid grid-cols-3 gap-3 mt-4">
+                ${images.map(([src, alt]) => `
+                    <div class="aspect-square rounded-2xl overflow-hidden bg-white border border-primary/10 shadow-sm">
+                        <img
+                            src="${routePrefix()}/${src}"
+                            alt="${alt}"
+                            class="w-full h-full object-cover"
+                            loading="lazy"
+                            decoding="async"
+                        >
+                    </div>
+                `).join("")}
+            </div>
+        `;
+    };
+
     main.innerHTML = `
         <!-- Hero Section -->
         <section class="hero-pattern overflow-hidden relative">
@@ -51,6 +75,7 @@ function renderProductPage(slug) {
                     
                     <div class="lg:col-span-5 order-1 lg:order-2">
                         ${productPageImage(product.pageImages.hero, product.name, "aspect-[4/5]")}
+                        ${productGallery(product)}
                     </div>
                 </div>
             </div>
