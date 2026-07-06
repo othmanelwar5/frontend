@@ -4,14 +4,16 @@ function renderProductPage(slug) {
 
     document.title = `ميزاني | ${product.name}`;
     const main = document.querySelector("[data-product-page]");
-    
-    // Placeholder logic for empty images as requested: "you can have images ampy"
-    const imagePlaceholder = (text) => `
-        <div class="w-full h-full bg-gray-200 border-2 border-dashed border-gray-300 rounded-3xl flex items-center justify-center text-gray-500 font-bold text-center p-6">
-            <div class="space-y-3">
-                <svg class="w-12 h-12 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                <p>${text}</p>
-            </div>
+
+    const productPageImage = (src, alt, aspectClass) => `
+        <div class="${aspectClass} rounded-[2rem] overflow-hidden bg-white border border-primary/10 soft-shadow">
+            <img
+                src="${routePrefix()}/${src}"
+                alt="${alt}"
+                class="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+            >
         </div>
     `;
 
@@ -48,7 +50,7 @@ function renderProductPage(slug) {
                     </div>
                     
                     <div class="lg:col-span-5 order-1 lg:order-2">
-                        ${packMockup(product)}
+                        ${productPageImage(product.pageImages.hero, product.name, "aspect-[4/5]")}
                     </div>
                 </div>
             </div>
@@ -114,7 +116,7 @@ function renderProductPage(slug) {
                         <div class="w-16 h-16 bg-primary/5 rounded-2xl flex items-center justify-center mb-6 border border-primary/10">
                             <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                         </div>
-                        <span class="text-accent font-extrabold text-sm tracking-wider">الجودة والأمان أولاً</span>
+                        <span class="text-accent font-extrabold text-sm tracking-wider">معايير صيدلية</span>
                         <h2 class="text-3xl lg:text-4xl font-extrabold text-primary mt-3 mb-6 leading-tight">${product.fdaTitle}</h2>
                         <p class="text-lg text-charcoal leading-9 mb-8">${product.fdaText}</p>
                         
@@ -132,7 +134,7 @@ function renderProductPage(slug) {
                     
                     <!-- Image (Left visually in RTL -> second DOM element) -->
                     <div class="order-2 aspect-[4/3] w-full">
-                        ${imagePlaceholder('صورة توضيحية لشهادات الجودة والمصنع')}
+                        ${productPageImage(product.pageImages.authority, `${product.name} بمعايير صيدلية`, "aspect-[4/3]")}
                     </div>
                 </div>
             </div>
@@ -144,7 +146,7 @@ function renderProductPage(slug) {
             <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
                 <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                     <div class="order-2 lg:order-1 aspect-square w-full">
-                        ${imagePlaceholder('رسم بياني علمي أو صورة للمكونات بشكل احترافي')}
+                        ${productPageImage(product.pageImages.science, `مكونات ${product.name}`, "aspect-square")}
                     </div>
                     <div class="order-1 lg:order-2">
                         <span class="text-accent font-extrabold text-sm tracking-wider">مدعوم بالدليل</span>
@@ -162,9 +164,9 @@ function renderProductPage(slug) {
         <section id="ingredients" class="py-20 lg:py-28 bg-cream">
             <div class="max-w-7xl mx-auto px-4 sm:px-6">
                 <div class="text-center max-w-3xl mx-auto mb-16">
-                    <span class="text-accent font-extrabold text-sm tracking-wider block mb-2">التركيبة الفعالة</span>
-                    <h2 class="text-3xl lg:text-5xl font-extrabold text-primary mb-6">ليش ميزاني يعطيك نتيجة فعلية؟</h2>
-                    <p class="text-lg text-muted leading-8">لأننا نستخدم المكونات اللي يحتاجها جسمك بالجرعات الصحيحة، وبشكل يخليك تستمر عليها بدون ملل.</p>
+                    <span class="text-accent font-extrabold text-sm tracking-wider block mb-2">تركيبة صيدلانية</span>
+                    <h2 class="text-3xl lg:text-5xl font-extrabold text-primary mb-6">ليش تثق في تركيبة ميزاني؟</h2>
+                    <p class="text-lg text-muted leading-8">مكونات مُعلَنة، جرعات مدروسة، وتعبئة بمعايير GMP — لأن الالتزام اليومي يبدأ من الثقة.</p>
                 </div>
                 
                 <div class="grid md:grid-cols-3 gap-6 lg:gap-8">
@@ -185,7 +187,7 @@ function renderProductPage(slug) {
         <section id="reviews" class="py-20 lg:py-28 bg-white border-t border-gray-100">
             <div class="max-w-7xl mx-auto px-4 sm:px-6">
                 <div class="text-center mb-16">
-                    <h2 class="text-3xl lg:text-5xl font-extrabold text-primary mb-6">ماذا يقول عملاء ميزاني؟</h2>
+                    <h2 class="text-3xl lg:text-5xl font-extrabold text-primary mb-6">ماذا يقول عملاؤنا؟</h2>
                     <div class="flex items-center justify-center gap-2 text-accent text-xl">
                         ★★★★★
                         <span class="text-charcoal font-bold text-sm ml-2">4.8/5 متوسط التقييمات</span>
@@ -225,13 +227,13 @@ function renderProductPage(slug) {
 
         <!-- Final CTA Section -->
         <section class="py-20 lg:py-28 bg-primary relative overflow-hidden">
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_100%,rgba(201,143,106,0.3),transparent_60%)]"></div>
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_100%,rgba(20,145,155,0.3),transparent_60%)]"></div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 grid lg:grid-cols-2 gap-16 items-center">
                 <div class="text-cream text-center lg:text-right">
-                    <span class="text-accent font-extrabold tracking-widest text-sm uppercase mb-4 block">اطلب بدون مخاطرة</span>
-                    <h2 class="text-4xl lg:text-6xl font-extrabold mb-6 leading-tight">جاهز تبدأ روتينك الجديد؟</h2>
+                    <span class="text-accent font-extrabold tracking-widest text-sm uppercase mb-4 block">اطلب بثقة صيدلية</span>
+                    <h2 class="text-4xl lg:text-6xl font-extrabold mb-6 leading-tight">ابدأ روتينك اليومي</h2>
                     <p class="text-lg text-white/80 leading-9 mb-8 max-w-xl mx-auto lg:mx-0">
-                        الكمية المتاحة للتوصيل الفوري محدودة. اختر الباقة المناسبة، اكتب معلوماتك، وفريقنا بيتصل بك للتأكيد قبل إرسال الطلب. الدفع عند الاستلام.
+                        حلوى مكملات مدروسة — اختر الباقة، اكتب معلوماتك، وفريقنا يتصل بك للتأكيد. الدفع عند الاستلام فقط.
                     </p>
                     <ul class="text-right space-y-4 text-white/90 font-bold max-w-md mx-auto lg:mx-0 hidden lg:block">
                         <li class="flex items-center gap-3"><span class="text-accent">✓</span> ضمان 30 يوم</li>
@@ -250,7 +252,7 @@ function renderProductPage(slug) {
             <div class="max-w-3xl mx-auto px-4 sm:px-6">
                 <div class="text-center mb-12">
                     <h2 class="text-3xl lg:text-5xl font-extrabold text-primary mb-4">أسئلة تهمك قبل الطلب</h2>
-                    <p class="text-muted">نحن هنا للإجابة بكل شفافية</p>
+                    <p class="text-muted">إجابات واضحة — بروح الصيدلية</p>
                 </div>
                 <div class="space-y-4">
                     <div class="bg-white rounded-2xl p-6 border border-primary/10 shadow-sm">
@@ -263,7 +265,7 @@ function renderProductPage(slug) {
                     </div>
                     <div class="bg-white rounded-2xl p-6 border border-primary/10 shadow-sm">
                         <strong class="text-primary text-lg block mb-2">هل هذا بديل لأدويتي؟</strong>
-                        <p class="text-muted leading-8 font-medium">قطعاً لا. منتجات ميزاني هي مكملات غذائية لدعم الصحة العامة وليست أدوية طبية لغرض التشخيص أو العلاج.</p>
+                        <p class="text-muted leading-8 font-medium">قطعاً لا. منتجات ميزاني مكملات غذائية لدعم الصحة العامة — ليست أدوية طبية. استشر طبيبك عند الحاجة.</p>
                     </div>
                     <div class="bg-white rounded-2xl p-6 border border-primary/10 shadow-sm">
                         <strong class="text-primary text-lg block mb-2">إذا ما ناسبني المنتج؟</strong>

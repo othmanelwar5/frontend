@@ -1,9 +1,14 @@
-const products = {
+﻿const products = {
     "d3-k2-gummies": {
         slug: "d3-k2-gummies",
         sku: "MZN-D3K2-8417",
         name: "حلوى فيتامين D3 و K2",
-        image: "assets/products/d3-k2-gummies.png",
+        image: "assets/products/d3-k2-gummies.webp",
+        pageImages: {
+            hero: "assets/product-pages/d3-hero.webp",
+            authority: "assets/product-pages/d3-authority.webp",
+            science: "assets/product-pages/d3-science.webp"
+        },
         short: "لدعم مستويات فيتامين د وصحة العظام في ظل زحمة الروتين وقلة التعرض للشمس.",
         headline: "طاقة أعلى وعظام أقوى.. بدون كبسولات مزعجة",
         subheading: "حلوى يومية لذيذة مصممة لروتينك المزدحم. تعوضك عن قلة التعرض للشمس وتدعم نشاطك اليومي بكل سهولة.",
@@ -38,7 +43,12 @@ const products = {
         slug: "sleep-tea",
         sku: "MZN-SLP-2935",
         name: "شاي الأشواغاندا والمغنيسيوم",
-        image: "assets/products/sleep-tea.png",
+        image: "assets/products/sleep-tea.webp",
+        pageImages: {
+            hero: "assets/product-pages/sleep-hero.webp",
+            authority: "assets/product-pages/sleep-authority.webp",
+            science: "assets/product-pages/sleep-science.webp"
+        },
         short: "لروتين مسائي أهدأ، يساعدك على الاسترخاء بعد يوم طويل ومزدحم.",
         headline: "افصل عن ضغوط اليوم واستعد لنوم أعمق",
         subheading: "مزيج الأشواغاندا والمغنيسيوم يرسل إشارة واضحة لجسمك: انتهى وقت التوتر، وبدأ وقت الراحة.",
@@ -73,7 +83,12 @@ const products = {
         slug: "probiotic-fiber-gummies",
         sku: "MZN-PRB-6102",
         name: "حلوى البروبيوتيك والألياف",
-        image: "assets/products/probiotic-fiber-gummies.png",
+        image: "assets/products/probiotic-fiber-gummies.webp",
+        pageImages: {
+            hero: "assets/product-pages/probiotic-hero.webp",
+            authority: "assets/product-pages/probiotic-authority.webp",
+            science: "assets/product-pages/probiotic-science.webp"
+        },
         short: "لدعم صحة جهازك الهضمي وتقليل الإحساس بالانتفاخ والثقل بعد الوجبات.",
         headline: "راحة أكبر بعد كل وجبة.. بقطعة حلوى واحدة",
         subheading: "حلوى البروبيوتيك والألياف مصممة لدعم توازن بكتيريا الأمعاء، وتقليل الانزعاج اليومي بطريقة سهلة ولذيذة.",
@@ -366,7 +381,6 @@ function footer() {
                     </div>
                     <p class="text-base text-cream/70 leading-8 mb-6 pr-2">صيدلية مكملات يومية رقمية — حلوى فيتامينات وبروبيوتيك بتركيبات مدعومة علمياً، مصانع معتمدة (FDA/GMP)، ومكونات مُعلَنة. مكملاتك اليومية بثقة صيدلية.</p>
                     <div class="flex gap-4">
-                        <!-- Social placeholders -->
                         <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition cursor-pointer">IG</div>
                         <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition cursor-pointer">TT</div>
                         <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition cursor-pointer">SC</div>
