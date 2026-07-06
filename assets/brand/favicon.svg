@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Mizan">
+  <path d="M61 87v108M61 87l67 72M128 159l67-72M195 87v108" fill="none" stroke="#0B4F6C" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M31 164h194" fill="none" stroke="#0B4F6C" stroke-width="14" stroke-linecap="round"/>
+  <circle cx="128" cy="164" r="10" fill="#0B4F6C"/>
+  <path d="M128 38v66M95 71h66" fill="none" stroke="#14919B" stroke-width="38" stroke-linecap="round"/>
+</svg>

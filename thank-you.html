@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ميزاني | تم استلام طلبك بنجاح</title>
     <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#0B4F6C">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,14 +21,14 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#17463A',
-                        secondary: '#F4E9D8',
-                        accent: '#C98F6A',
-                        cream: '#FFF9F0',
-                        charcoal: '#1F2421',
-                        muted: '#68756D',
-                        success: '#2F7D57',
-                        warning: '#B7791F'
+                        primary: '#0B4F6C',
+                        secondary: '#E5F3F7',
+                        accent: '#14919B',
+                        cream: '#F8FAFB',
+                        charcoal: '#1A2B33',
+                        muted: '#5C7280',
+                        success: '#15803D',
+                        warning: '#B45309'
                     },
                     fontFamily: {
                         sans: ['"IBM Plex Sans Arabic"', 'sans-serif'],
@@ -31,8 +38,8 @@
         }
     </script>
     <style>
-        body { background: #FFF9F0; color: #1F2421; }
-        .soft-shadow { box-shadow: 0 20px 60px rgba(23, 70, 58, 0.08); }
+        body { background: #F8FAFB; color: #1A2B33; }
+        .soft-shadow { box-shadow: 0 20px 60px rgba(11, 79, 108, 0.08); }
         .success-ring {
             animation: pulseRing 2s ease-out infinite;
         }
@@ -67,10 +74,10 @@
     <!-- Header -->
     <header class="bg-white/90 backdrop-blur border-b border-primary/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-center gap-3">
-            <div class="w-11 h-11 rounded-full bg-primary flex items-center justify-center text-cream font-extrabold text-xl">M</div>
+            <img src="/assets/brand/mizan-mark-light.png" alt="ميزاني" class="w-11 h-11 rounded-full shadow-sm">
             <div>
                 <h1 class="text-xl font-extrabold text-primary leading-none">ميزاني</h1>
-                <span class="text-[10px] text-muted tracking-[0.28em] uppercase">mymizan</span>
+                <span class="text-[10px] text-accent tracking-wide font-bold">صيدلية المكملات اليومية</span>
             </div>
         </div>
     </header>
@@ -85,7 +92,7 @@
                 </svg>
             </div>
             <h2 class="text-3xl lg:text-5xl font-extrabold text-primary mb-4 leading-tight">تم استلام طلبك بنجاح</h2>
-            <p class="text-lg lg:text-xl text-charcoal leading-9 max-w-xl mx-auto">شكراً لثقتك في ميزاني. سيتم التواصل معك قريباً لتأكيد الطلب.</p>
+            <p class="text-lg lg:text-xl text-charcoal leading-9 max-w-xl mx-auto">شكراً لثقتك في ميزاني. فريقنا بيتواصل معك قريباً لتأكيد طلبك — مكملاتك اليومية بثقة صيدلية.</p>
         </section>
 
         <!-- Order Summary Card -->
@@ -194,7 +201,7 @@
         <!-- Trust Reinforcement -->
         <section class="mb-12 fade-in-up delay-5">
             <div class="bg-secondary/50 rounded-[2rem] p-6 sm:p-8 border border-primary/10">
-                <h3 class="text-lg font-extrabold text-primary mb-4 text-center">ليش عملاؤنا يثقون في ميزاني</h3>
+                <h3 class="text-lg font-extrabold text-primary mb-4 text-center">معايير الصيدلية اللي تثق فيها</h3>
                 <div class="grid sm:grid-cols-2 gap-4">
                     <div class="flex items-start gap-3">
                         <span class="text-success font-bold text-lg mt-0.5">✓</span>
@@ -213,8 +220,8 @@
                     <div class="flex items-start gap-3">
                         <span class="text-success font-bold text-lg mt-0.5">✓</span>
                         <div>
-                            <p class="font-bold text-charcoal text-sm">مصانع معتمدة GMP</p>
-                            <p class="text-muted text-xs mt-0.5">جودة عالمية ومكونات موثوقة</p>
+                            <p class="font-bold text-charcoal text-sm">مصانع معتمدة · GMP</p>
+                            <p class="text-muted text-xs mt-0.5">معايير تصنيع صيدلانية عالمية</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3">
@@ -232,7 +239,7 @@
         <section class="text-center fade-in-up delay-5">
             <a href="/" class="inline-flex items-center gap-2 bg-primary text-cream px-8 py-4 rounded-2xl font-extrabold text-lg hover:bg-primary/90 transition shadow-lg">
                 <svg class="w-5 h-5 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                تصفح منتجات أخرى
+                تصفح حلوى المكملات
             </a>
             <p class="text-sm text-muted mt-4">أو انتظر مكالمة التأكيد من فريقنا</p>
         </section>
@@ -246,13 +253,13 @@
                 <span class="font-extrabold text-lg">ميزاني</span>
             </div>
             <div class="flex flex-wrap justify-center gap-5 text-sm text-secondary mb-6">
+                <span>مصانع معتمدة · GMP</span>
                 <span>دفع عند الاستلام</span>
                 <span>توصيل السعودية</span>
-                <span>دعم واتساب</span>
                 <span>ضمان 30 يوم</span>
             </div>
             <div class="text-xs text-secondary/70 leading-7">
-                <p>منتجات ميزاني مكملات وروتين عناية يومية وليست بديلاً عن الاستشارة الطبية أو العلاج.</p>
+                <p>ميزاني — صيدلية المكملات اليومية. المنتجات مكملات غذائية وليست أدوية ولا بديلاً عن الاستشارة الطبية.</p>
                 <p class="mt-2">جميع الحقوق محفوظة &copy; ميزاني 2026</p>
             </div>
         </div>

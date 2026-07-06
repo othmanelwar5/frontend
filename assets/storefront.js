@@ -1,7 +1,9 @@
 const products = {
     "d3-k2-gummies": {
         slug: "d3-k2-gummies",
+        sku: "MZN-D3K2-8417",
         name: "حلوى فيتامين D3 و K2",
+        image: "assets/products/d3-k2-gummies.png",
         short: "لدعم مستويات فيتامين د وصحة العظام في ظل زحمة الروتين وقلة التعرض للشمس.",
         headline: "طاقة أعلى وعظام أقوى.. بدون كبسولات مزعجة",
         subheading: "حلوى يومية لذيذة مصممة لروتينك المزدحم. تعوضك عن قلة التعرض للشمس وتدعم نشاطك اليومي بكل سهولة.",
@@ -20,7 +22,7 @@ const products = {
             ["تركيبة الحلوى الذكية", "طعم لذيذ يخليك تنتظر وقتها كل يوم، عشان تلتزم بدون ملل."]
         ],
         fdaTitle: "مصنع وفق أعلى المعايير لضمان جودتك",
-        fdaText: "نؤمن في ميزاني أن صحتك لا تقبل المساومة. منتجاتنا تعبأ وتصنع في منشآت معتمدة ومسجلة (FDA Registered Facility)، باتباع ممارسات التصنيع الجيدة (GMP). كل عبوة تصلك مختومة ومفحوصة لتضمن لك أعلى درجات النقاء والأمان.",
+        fdaText: "في ميزاني، صحتك لا تقبل المساومة. كل حلوى تُصنع وتُعبأ في منشآت معتمدة ومسجلة (FDA Registered Facility) بمعايير التصنيع الصيدلاني (GMP). كل عبوة تصلك مختومة ومفحوصة — بثقة صيدلية حقيقية.",
         scienceTitle: "الأساس العلمي لروتينك الجديد",
         scienceText: "اجتماع D3 مع K2 ليس صدفة. الدراسات توضح أن تناول D3 لوحده يزيد امتصاص الكالسيوم، لكن K2 هو من يضمن توجيه هذا الكالسيوم للعظام. جمعناها لك في تركيبة واحدة لذيذة لتوفير أقصى فائدة علمية مثبتة.",
         reviews: [
@@ -28,13 +30,15 @@ const products = {
             { name: "أمل سعد - جدة", text: "كنت أعاني من خمول عجيب، بعد ما التزمت بهالحلوى حسيت بفرق بطاقتي. والأهم إنهم تواصلوا معي واتس اب قبل الشحن.", rating: 5 },
             { name: "نورة القحطاني - الدمام", text: "مريحة جداً مقارنة بالحبوب اللي كنت أبلعها بالغصب. الدفع عند الاستلام ريحني كثير في التعامل معاهم.", rating: 5 }
         ],
-        proof: "D3 و K2 من التركيبات الأكثر بحثاً علمياً في مكملات دعم العظام. ميزاني يقدمها بشكل حلوى يومية سهلة لتضمن استمرارك، مع تنبيه دائم بأنها داعم يومي وليست بديلاً للرعاية الطبية.",
+        proof: "D3 و K2 من التركيبات الأكثر بحثاً علمياً. ميزاني يقدمها كحلوى صيدلانية يومية لضمان الالتزام — داعم يومي وليس بديلاً للرعاية الطبية.",
         review: "أخيراً لقيت فيتامين دال ما أنساه! طعمه يجنن وصرت أخليه مع قهوة الصباح.",
         reviewer: "سعد - الرياض"
     },
     "sleep-tea": {
         slug: "sleep-tea",
+        sku: "MZN-SLP-2935",
         name: "شاي الأشواغاندا والمغنيسيوم",
+        image: "assets/products/sleep-tea.png",
         short: "لروتين مسائي أهدأ، يساعدك على الاسترخاء بعد يوم طويل ومزدحم.",
         headline: "افصل عن ضغوط اليوم واستعد لنوم أعمق",
         subheading: "مزيج الأشواغاندا والمغنيسيوم يرسل إشارة واضحة لجسمك: انتهى وقت التوتر، وبدأ وقت الراحة.",
@@ -53,7 +57,7 @@ const products = {
             ["طقس الشاي الدافئ", "صناعة المشروب نفسه تعتبر 'إشارة حسية' تخبر الدماغ ببدء وقت الاسترخاء."]
         ],
         fdaTitle: "جودة تستحقها قبل النوم",
-        fdaText: "لأن الهدوء يحتاج مكونات نقية، شاي ميزاني معبأ في منشآت معتمدة ومسجلة (FDA Registered Facility) وفق معايير GMP الصارمة. خالي من المهدئات الكيميائية أو المواد التي تسبب التعود، لتنام مرتاح البال.",
+        fdaText: "لأن الهدوء يحتاج مكونات نقية، شاي ميزاني معبأ في منشآت معتمدة (FDA Registered Facility) وفق معايير GMP الصيدلانية. خالي من مهدئات كيميائية أو مواد تسبب التعود.",
         scienceTitle: "علم الاسترخاء الطبيعي",
         scienceText: "المغنيسيوم يعمل على مستوى الناقلات العصبية لتهدئة الإشارات، بينما الأشواغاندا تعمل على تنظيم مستويات الكورتيزول (هرمون التوتر). هذا الدمج المبتكر يحترم بيولوجيا جسمك ويحفز النوم بشكل طبيعي.",
         reviews: [
@@ -67,7 +71,9 @@ const products = {
     },
     "probiotic-fiber-gummies": {
         slug: "probiotic-fiber-gummies",
+        sku: "MZN-PRB-6102",
         name: "حلوى البروبيوتيك والألياف",
+        image: "assets/products/probiotic-fiber-gummies.png",
         short: "لدعم صحة جهازك الهضمي وتقليل الإحساس بالانتفاخ والثقل بعد الوجبات.",
         headline: "راحة أكبر بعد كل وجبة.. بقطعة حلوى واحدة",
         subheading: "حلوى البروبيوتيك والألياف مصممة لدعم توازن بكتيريا الأمعاء، وتقليل الانزعاج اليومي بطريقة سهلة ولذيذة.",
@@ -86,7 +92,7 @@ const products = {
             ["حلوى سهلة ولذيذة", "بدون تحضير، بدون خلط.. مجرد قطعة حلوى لذيذة بعد وجبتك."]
         ],
         fdaTitle: "نقاء معتمد لمعدتك",
-        fdaText: "لأن الجهاز الهضمي حساس جداً، حرصنا أن تصنع هذه الحلوى في منشأة مسجلة عالمياً (FDA Registered Facility) تطبق أعلى ممارسات الجودة (GMP). مكونات مختبرة بعناية لتناسب روتينك اليومي بكل أمان.",
+        fdaText: "لأن الجهاز الهضمي حساس، تُصنع هذه الحلوى في منشأة مسجلة (FDA Registered Facility) بأعلى ممارسات الجودة الصيدلانية (GMP). مكونات مختبرة بعناية لروتينك اليومي.",
         scienceTitle: "توازن بكتيريا الأمعاء هو الحل",
         scienceText: "العلم الحديث يثبت أن الأمعاء هي 'الدماغ الثاني'. إضافة البروبيوتيك مع الألياف (البريبايوتيك) يصنع بيئة تكافلية متكاملة (Synbiotic)، مما يعزز عملية الهضم ويخفف من تراكم الغازات المزعجة.",
         reviews: [
@@ -148,28 +154,91 @@ function routePrefix() {
     return window.location.pathname.includes("/products/") ? "../.." : ".";
 }
 
+function getApiBase() {
+    const configuredApiUrl = typeof window.MYMIZAN_API_URL === "string" ? window.MYMIZAN_API_URL.trim() : "";
+    if (!configuredApiUrl && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
+        return "http://localhost:8000";
+    }
+    return (configuredApiUrl || "https://api.mymizan.shop").replace(/\/+$/, "");
+}
+
+function getAnalyticsSessionId() {
+    const key = "mymizan_analytics_session";
+    let sessionId = localStorage.getItem(key);
+    if (!sessionId) {
+        sessionId = "sess_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 10);
+        localStorage.setItem(key, sessionId);
+    }
+    return sessionId;
+}
+
+function currentUtmParams() {
+    const params = new URLSearchParams(window.location.search);
+    return ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"].reduce((memo, key) => {
+        const value = params.get(key);
+        if (value) memo[key] = value;
+        return memo;
+    }, {});
+}
+
+function trackStorefrontEvent(eventName, properties) {
+    if (window.MYMIZAN_DISABLE_ANALYTICS === true) return;
+
+    const payload = {
+        event_name: eventName,
+        session_id: getAnalyticsSessionId(),
+        occurred_at: new Date().toISOString(),
+        path: window.location.pathname,
+        url: window.location.href,
+        referrer: document.referrer || "",
+        user_agent: navigator.userAgent,
+        product_slug: document.body.dataset.productSlug || null,
+        properties: {
+            ...currentUtmParams(),
+            ...(properties || {})
+        }
+    };
+
+    const endpoint = getApiBase() + "/events";
+    const body = JSON.stringify(payload);
+
+    if (navigator.sendBeacon) {
+        const blob = new Blob([body], { type: "application/json" });
+        if (navigator.sendBeacon(endpoint, blob)) return;
+    }
+
+    fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body,
+        keepalive: true
+    }).catch(() => {});
+}
+
+window.trackStorefrontEvent = trackStorefrontEvent;
+
 function header() {
     return `
         <div class="bg-primary text-cream text-center text-xs sm:text-sm py-2.5 font-semibold flex items-center justify-center gap-4">
-            <span>✓ الدفع عند الاستلام</span>
+            <span>✓ مصانع معتمدة · GMP</span>
+            <span class="hidden sm:inline">|</span>
+            <span class="hidden sm:inline">✓ الدفع عند الاستلام</span>
             <span class="hidden sm:inline">|</span>
             <span class="hidden sm:inline">✓ تأكيد قبل الشحن</span>
-            <span class="hidden sm:inline">|</span>
-            <span class="hidden sm:inline">✓ شحن سريع للمدن الرئيسية (1-2 أيام)</span>
         </div>
         <header class="bg-white/95 backdrop-blur-md border-b border-primary/10 sticky top-0 z-50 soft-shadow">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
                 <a href="${routePrefix()}/" class="flex items-center gap-3 group">
-                    <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-cream font-extrabold text-2xl group-hover:scale-105 transition-transform shadow-md">M</div>
+                    <img src="${routePrefix()}/assets/brand/mizan-mark-light.png" alt="ميزاني" class="w-12 h-12 rounded-full shadow-md group-hover:scale-105 transition-transform">
                     <div>
                         <h1 class="text-2xl font-extrabold text-primary leading-none tracking-tight">ميزاني</h1>
-                        <span class="text-[11px] text-accent font-bold tracking-[0.2em] uppercase">mymizan</span>
+                        <span class="text-[10px] text-accent font-bold tracking-wide">صيدلية المكملات اليومية</span>
                     </div>
                 </a>
                 <nav class="hidden md:flex items-center gap-8 text-sm font-bold text-charcoal">
                     <a href="${routePrefix()}/" class="hover:text-accent transition">الرئيسية</a>
                     <a href="${routePrefix()}/#products" class="hover:text-accent transition">المنتجات</a>
-                    <a href="${routePrefix()}/#why" class="hover:text-accent transition">قصتنا</a>
+                    <a href="${routePrefix()}/#why" class="hover:text-accent transition">من نحن</a>
                     <a href="${routePrefix()}/#faq" class="hover:text-accent transition">الأسئلة</a>
                 </nav>
                 <button data-cart-open class="bg-primary text-cream px-6 py-3 rounded-full text-sm font-extrabold hover:bg-primary/90 transition shadow-md flex items-center gap-2">
@@ -182,25 +251,13 @@ function header() {
 }
 
 function packMockup(product) {
+    const imageSrc = routePrefix() + "/" + product.image;
     return `
         <div class="relative bg-white/80 border border-white rounded-[2rem] p-4 sm:p-6 soft-shadow backdrop-blur-sm">
             <div class="aspect-[4/5] rounded-[1.7rem] overflow-hidden bg-gradient-to-br from-secondary/80 to-cream relative flex items-center justify-center group" role="img" aria-label="صورة لمنتج ${product.name}">
-                <div class="absolute inset-0 opacity-60 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.9),transparent_28%),radial-gradient(circle_at_75%_75%,rgba(201,143,106,0.3),transparent_30%)] mix-blend-overlay"></div>
+                <div class="absolute inset-0 opacity-60 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.9),transparent_28%),radial-gradient(circle_at_75%_75%,rgba(20,145,155,0.3),transparent_30%)] mix-blend-overlay"></div>
                 
-                <!-- Product 3D Mockup -->
-                <div class="relative w-56 sm:w-72 h-80 sm:h-96 rounded-[2.5rem] pack-mockup p-7 text-cream flex flex-col justify-between rotate-[-4deg] glow-shadow border border-white/40 group-hover:rotate-0 transition-transform duration-500 ease-out z-10">
-                    <div>
-                        <div class="w-14 h-14 rounded-full bg-cream text-primary flex items-center justify-center text-2xl font-extrabold mb-5 shadow-inner">M</div>
-                        <p class="text-sm opacity-90 font-medium tracking-wider">MYMIZAN</p>
-                        <h3 class="text-3xl font-extrabold leading-tight mt-1 text-white">${product.name.replace('حلوى', 'حلوى<br>').replace('شاي', 'شاي<br>')}</h3>
-                    </div>
-                    <div>
-                        <p class="text-sm bg-white/20 backdrop-blur-md rounded-full px-4 py-2 inline-block mb-4 font-bold border border-white/10">${product.label}</p>
-                        <div class="grid grid-cols-2 gap-2 text-xs font-bold">
-                            ${product.chips.slice(0,4).map((chip) => `<span class="bg-white/10 backdrop-blur-sm border border-white/5 rounded-xl px-3 py-2 text-center">${chip}</span>`).join("")}
-                        </div>
-                    </div>
-                </div>
+                <img src="${imageSrc}" alt="${product.name}" class="relative z-10 w-full h-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]">
 
                 <!-- Floating Badges -->
                 <div class="absolute top-6 right-6 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl text-xs font-extrabold text-primary shadow-lg z-20 flex items-center gap-1 border border-primary/5">
@@ -209,7 +266,7 @@ function packMockup(product) {
                 
                 <div class="absolute bottom-6 left-6 bg-primary text-cream px-5 py-3 rounded-2xl text-sm font-bold shadow-xl z-20 flex items-center gap-2 border border-white/10">
                     <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    ضمان الجودة
+                    معايير صيدلية
                 </div>
             </div>
         </div>
@@ -301,13 +358,13 @@ function footer() {
             <div class="max-w-7xl mx-auto px-4 sm:px-6 grid md:grid-cols-12 gap-10">
                 <div class="md:col-span-5">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="w-12 h-12 rounded-full bg-primary text-cream flex items-center justify-center font-extrabold text-2xl">M</div>
+                        <img src="${routePrefix()}/assets/brand/mizan-mark-light.png" alt="ميزاني" class="w-12 h-12 rounded-full shadow-sm">
                         <div>
                             <p class="font-extrabold text-xl">ميزاني</p>
-                            <p class="text-[10px] text-accent tracking-[0.2em] uppercase">mymizan</p>
+                            <p class="text-[10px] text-accent tracking-wide font-bold">صيدلية المكملات اليومية</p>
                         </div>
                     </div>
-                    <p class="text-base text-cream/70 leading-8 mb-6 pr-2">نقدم لك منتجات عناية يومية مختارة بعناية لدعم توازنك الداخلي، بتركيبات مدعومة علمياً وتجربة طلب تليق بك. ميزاني.. روتينك الأسهل.</p>
+                    <p class="text-base text-cream/70 leading-8 mb-6 pr-2">صيدلية مكملات يومية رقمية — حلوى فيتامينات وبروبيوتيك بتركيبات مدعومة علمياً، مصانع معتمدة (FDA/GMP)، ومكونات مُعلَنة. مكملاتك اليومية بثقة صيدلية.</p>
                     <div class="flex gap-4">
                         <!-- Social placeholders -->
                         <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition cursor-pointer">IG</div>
@@ -320,7 +377,7 @@ function footer() {
                     <div class="space-y-3">
                         <a class="block text-sm text-cream/70 hover:text-accent transition" href="${routePrefix()}/">الرئيسية</a>
                         <a class="block text-sm text-cream/70 hover:text-accent transition" href="${routePrefix()}/#products">كل المنتجات</a>
-                        <a class="block text-sm text-cream/70 hover:text-accent transition" href="${routePrefix()}/#why">قصة ميزاني</a>
+                        <a class="block text-sm text-cream/70 hover:text-accent transition" href="${routePrefix()}/#why">من نحن</a>
                     </div>
                 </div>
                 <div class="md:col-span-2">
@@ -333,7 +390,7 @@ function footer() {
                     </div>
                 </div>
                 <div class="md:col-span-3">
-                    <h4 class="font-extrabold text-lg mb-5 text-white">ضمان ميزاني</h4>
+                    <h4 class="font-extrabold text-lg mb-5 text-white">معايير الصيدلية</h4>
                     <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
                         <div class="flex items-start gap-3 mb-3">
                             <div class="w-8 h-8 rounded-full bg-accent/20 text-accent flex items-center justify-center shrink-0">✓</div>
@@ -347,8 +404,8 @@ function footer() {
                 </div>
             </div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 mt-12 pt-8 border-t border-white/10 text-center flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-xs text-cream/50">جميع الحقوق محفوظة لميزاني © 2026. هذا المتجر مسجل وموثق.</p>
-                <p class="text-xs text-cream/40">المنتجات المعروضة هي مكملات غذائية وليست أدوية طبية.</p>
+                <p class="text-xs text-cream/50">جميع الحقوق محفوظة لميزاني © 2026 · صيدلية المكملات اليومية</p>
+                <p class="text-xs text-cream/40">المنتجات مكملات غذائية — ليست أدوية طبية ولا بديلاً عن الاستشارة الطبية.</p>
             </div>
         </footer>
     `;
@@ -472,8 +529,8 @@ function initStorefront() {
         itemsEl.innerHTML = cart.length
             ? cart.map((item, idx) => `
                 <div class="bg-white rounded-2xl p-4 border border-primary/10 shadow-sm flex gap-4 relative animate-fade-in" style="animation-delay: ${idx * 0.05}s">
-                    <div class="w-20 h-20 rounded-xl bg-secondary flex items-center justify-center shrink-0 border border-primary/5">
-                        <div class="w-8 h-8 rounded-full bg-cream text-primary flex items-center justify-center text-xs font-extrabold">M</div>
+                    <div class="w-20 h-20 rounded-xl bg-secondary overflow-hidden shrink-0 border border-primary/5">
+                        <img src="${routePrefix()}/${item.image}" alt="${item.name}" class="w-full h-full object-cover">
                     </div>
                     <div class="flex-1">
                         <p class="font-extrabold text-primary text-sm leading-tight mb-1">${item.name}</p>
@@ -510,9 +567,17 @@ function initStorefront() {
     window.handleAddProduct = function(slug) {
         const product = products[slug];
         if (product) {
+            const selectedOffer = offers[getSelectedOffer(slug)];
             cart.push({
                 ...product,
-                offer: offers[getSelectedOffer(slug)]
+                offer: selectedOffer
+            });
+            trackStorefrontEvent("add_to_cart", {
+                product_slug: slug,
+                sku: product.sku,
+                offer_quantity: selectedOffer ? selectedOffer.numericQty : 1,
+                offer_price: selectedOffer ? selectedOffer.numericPrice : null,
+                cart_size: cart.length
             });
             renderCart();
             const cartEl = document.querySelector("[data-cart]");
@@ -521,6 +586,15 @@ function initStorefront() {
     };
 
     document.body.addEventListener("click", (event) => {
+        const trackedLink = event.target.closest("a[href], button");
+        if (trackedLink) {
+            trackStorefrontEvent("click", {
+                label: (trackedLink.textContent || "").trim().slice(0, 120),
+                href: trackedLink.getAttribute("href") || "",
+                action: trackedLink.dataset.addProduct ? "add_product" : trackedLink.dataset.checkoutOpen !== undefined ? "checkout_open" : "navigation"
+            });
+        }
+
         const addProductBtn = event.target.closest("[data-add-product]");
         if (addProductBtn) {
             window.handleAddProduct(addProductBtn.dataset.addProduct);
@@ -528,6 +602,7 @@ function initStorefront() {
         }
 
         if (event.target.closest("[data-cart-open]")) {
+            trackStorefrontEvent("cart_open", { cart_size: cart.length });
             cartEl?.classList.remove("hidden");
         }
         if (event.target.closest("[data-cart-close]")) {
@@ -535,6 +610,10 @@ function initStorefront() {
         }
         if (event.target.closest("[data-checkout-open]")) {
             if (cart.length === 0) return alert("السلة فارغة");
+            trackStorefrontEvent("checkout_open", {
+                cart_size: cart.length,
+                total: cart.reduce((sum, item) => sum + (item.offer ? item.offer.numericPrice : 0), 0)
+            });
             cartEl?.classList.add("hidden");
             checkoutEl?.classList.remove("hidden");
             checkoutEl?.classList.add("flex");
@@ -548,7 +627,7 @@ function initStorefront() {
     renderCart();
 
     const configuredApiUrl = typeof window.MYMIZAN_API_URL === "string" ? window.MYMIZAN_API_URL.trim() : "";
-    const API_BASE = (configuredApiUrl || "https://api.mymizan.shop").replace(/\/+$/, "");
+    const API_BASE = getApiBase();
 
     const checkoutForm = document.getElementById("checkout-form");
     console.log("[ORDER-DEBUG] step-1 checkout form lookup", { found: !!checkoutForm });
@@ -617,6 +696,11 @@ function initStorefront() {
             };
 
             console.log("[ORDER-DEBUG] step-5 payload built", orderPayload);
+            trackStorefrontEvent("order_submit_attempt", {
+                cart_size: cart.length,
+                items,
+                total: totalSar
+            });
 
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<svg class="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> جاري تأكيد الطلب...';
@@ -627,7 +711,7 @@ function initStorefront() {
                     String(now.getMonth() + 1).padStart(2, "0") +
                     String(now.getDate()).padStart(2, "0");
                 const seq = String(Math.floor(Math.random() * 9000) + 1000);
-                return "MYM-" + date + "-" + seq;
+                return "mizan" + date + seq;
             }
 
             function redirectToThankYou(orderNumber) {
@@ -673,9 +757,18 @@ function initStorefront() {
                     if (data.success && data.order_number) {
                         orderNumber = data.order_number;
                     }
+                    trackStorefrontEvent("order_created", {
+                        order_number: orderNumber,
+                        total: totalSar,
+                        items
+                    });
                 } else {
                     const errText = await response.text();
                     console.error("[ORDER-DEBUG] stop-4 backend returned non-OK", { status: response.status, body: errText });
+                    trackStorefrontEvent("order_submit_failed", {
+                        status: response.status,
+                        total: totalSar
+                    });
                     errorEl.textContent = "حدث خطأ أثناء تأكيد الطلب (الرمز " + response.status + "). يرجى المحاولة مرة أخرى.";
                     errorEl.classList.remove("hidden");
                     submitBtn.disabled = false;
@@ -684,6 +777,10 @@ function initStorefront() {
                 }
             } catch (e) {
                 console.error("[ORDER-DEBUG] stop-5 fetch threw before response", e);
+                trackStorefrontEvent("order_submit_failed", {
+                    reason: "network",
+                    total: totalSar
+                });
                 errorEl.textContent = "خطأ في الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت وتأكد أن السيرفر يعمل.";
                 errorEl.classList.remove("hidden");
                 submitBtn.disabled = false;
@@ -756,6 +853,15 @@ document.addEventListener("DOMContentLoaded", function() {
         hasSyncOfferRadios: typeof window.syncOfferRadios === "function"
     });
     initStorefront();
+    trackStorefrontEvent("page_view", {
+        title: document.title,
+        product_slug: document.body.dataset.productSlug || null
+    });
+    if (document.body.dataset.productSlug) {
+        trackStorefrontEvent("product_view", {
+            product_slug: document.body.dataset.productSlug
+        });
+    }
 });
 
 offerDebugLog("storefront:script-parsed", { line: "storefront.js executed successfully" });
