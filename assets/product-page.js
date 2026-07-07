@@ -57,7 +57,7 @@ function renderProductPage(slug) {
                         
                         <span class="text-accent text-sm font-extrabold tracking-wide mb-3 block inline-block bg-accent/10 px-4 py-1.5 rounded-full border border-accent/20">${product.eyebrow}</span>
                         
-                        <h2 class="text-4xl lg:text-6xl font-extrabold text-primary mb-6 leading-[1.2] drop-shadow-sm">${product.headline}</h2>
+                        <h2 id="product-headline" class="text-4xl lg:text-6xl font-extrabold text-primary mb-6 leading-[1.2] drop-shadow-sm scroll-mt-28">${product.headline}</h2>
                         
                         <p class="text-lg lg:text-xl text-charcoal leading-9 mb-8 font-medium">${product.subheading}</p>
                         
@@ -326,7 +326,7 @@ function renderProductPage(slug) {
                 </div>
             </div>
             <div class="flex-1 lg:flex-none">
-                <button data-add-product="${slug}" class="w-full lg:w-auto bg-primary text-cream font-extrabold text-lg lg:text-base px-8 py-4 lg:py-3 rounded-2xl shadow-xl flex items-center justify-center gap-2 hover:bg-primary/90 transition">
+                <button onclick="document.getElementById('product-headline').scrollIntoView({behavior: 'smooth'})" class="w-full lg:w-auto bg-primary text-cream font-extrabold text-lg lg:text-base px-8 py-4 lg:py-3 rounded-2xl shadow-xl flex items-center justify-center gap-2 hover:bg-primary/90 transition">
                     اطلب الآن - الدفع عند الاستلام
                 </button>
             </div>
