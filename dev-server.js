@@ -3,6 +3,26 @@ const fs = require("fs");
 const path = require("path");
 
 const root = process.cwd();
+
+function loadLocalEnv() {
+    const envPath = path.join(root, ".env");
+    if (!fs.existsSync(envPath)) return;
+
+    const lines = fs.readFileSync(envPath, "utf8").split(/\r?\n/);
+    for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith("#") || !trimmed.includes("=")) continue;
+        const eq = trimmed.indexOf("=");
+        const key = trimmed.slice(0, eq).trim();
+        const value = trimmed.slice(eq + 1).trim().replace(/^["']|["']$/g, "");
+        if (key && process.env[key] === undefined) {
+            process.env[key] = value;
+        }
+    }
+}
+
+loadLocalEnv();
+
 const port = process.env.PORT || 3000;
 const publicApiUrl = process.env.MYMIZAN_API_URL || process.env.NEXT_PUBLIC_API_URL || "";
 

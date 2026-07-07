@@ -5,13 +5,13 @@ function renderProductPage(slug) {
     document.title = `ميزاني | ${product.name}`;
     const main = document.querySelector("[data-product-page]");
 
-    const productPageImage = (src, alt, aspectClass) => `
+    const productPageImage = (src, alt, aspectClass, isPriority = false) => `
         <div class="${aspectClass} rounded-[2rem] overflow-hidden bg-white border border-primary/10 soft-shadow">
             <img
                 src="${routePrefix()}/${src}"
                 alt="${alt}"
                 class="w-full h-full object-cover"
-                loading="lazy"
+                ${isPriority ? 'fetchpriority="high"' : 'loading="lazy"'}
                 decoding="async"
             >
         </div>
@@ -44,7 +44,7 @@ function renderProductPage(slug) {
     main.innerHTML = `
         <!-- Hero Section -->
         <section class="hero-pattern overflow-hidden relative">
-            <div class="absolute inset-0 bg-white/40 backdrop-blur-[2px]"></div>
+            <div class="absolute inset-0 bg-white/70"></div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12 lg:py-20 relative z-10">
                 <div class="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
                     <div class="lg:col-span-7 order-2 lg:order-1">
@@ -63,7 +63,7 @@ function renderProductPage(slug) {
                         
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
                             ${product.chips.slice(0, 4).map((chip) => `
-                                <div class="bg-white/80 backdrop-blur-sm border border-primary/10 rounded-2xl p-4 text-center soft-shadow hover:-translate-y-1 transition-transform">
+                                <div class="bg-white/90 border border-primary/10 rounded-2xl p-4 text-center soft-shadow hover:-translate-y-1 transition-transform will-change-transform">
                                     <div class="w-8 h-8 mx-auto bg-primary/5 rounded-full flex items-center justify-center text-primary mb-2">✓</div>
                                     <p class="text-sm font-extrabold text-primary">${chip}</p>
                                 </div>
@@ -96,7 +96,7 @@ function renderProductPage(slug) {
                     </div>
                     
                     <div class="lg:col-span-5 order-1 lg:order-2">
-                        ${productPageImage(product.pageImages.hero, product.name, "aspect-[4/5]")}
+                        ${productPageImage(product.pageImages.hero, product.name, "aspect-[4/5]", true)}
                         ${productGallery(product)}
                     </div>
                 </div>
@@ -201,7 +201,7 @@ function renderProductPage(slug) {
                         <h2 class="text-3xl lg:text-4xl font-extrabold mb-6 leading-tight">${product.fdaTitle}</h2>
                         <p class="text-lg text-cream/90 leading-9 mb-8">${product.fdaText}</p>
                         
-                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 mb-8">
+                        <div class="bg-white/15 rounded-2xl p-6 border border-white/20 mb-8">
                             <h4 class="font-extrabold text-accent mb-2">توقعات واقعية:</h4>
                             <p class="text-sm leading-7">يبدأ المفعول من الأسبوع الأول، والنتيجة الحقيقية تظهر مع الالتزام. المكملات الغذائية تحتاج وقت لبناء مخزون الجسم بشكل طبيعي وآمن.</p>
                         </div>
@@ -315,7 +315,7 @@ function renderProductPage(slug) {
         </section>
 
         <!-- Smart Sticky CTA -->
-        <div id="sticky-cta" class="fixed inset-x-0 bg-white/95 backdrop-blur-md border-primary/10 px-4 py-3 z-50 shadow-[0_0_20px_rgba(0,0,0,0.1)] transition-transform duration-300 translate-y-full lg:-translate-y-full bottom-0 lg:bottom-auto lg:top-0 border-t lg:border-t-0 lg:border-b flex items-center justify-between gap-4">
+        <div id="sticky-cta" class="fixed inset-x-0 bg-white/98 border-primary/10 px-4 py-3 z-50 shadow-[0_0_20px_rgba(0,0,0,0.1)] transition-transform duration-300 translate-y-full lg:-translate-y-full bottom-0 lg:bottom-auto lg:top-0 border-t lg:border-t-0 lg:border-b flex items-center justify-between gap-4 will-change-transform">
             <div class="hidden lg:flex items-center gap-4">
                 <img src="${routePrefix()}/${product.image}" alt="${product.name}" class="w-12 h-12 rounded-xl object-cover border border-primary/10">
                 <div>
@@ -360,16 +360,22 @@ document.addEventListener("DOMContentLoaded", () => {
         selectedOffersState: window.selectedOffers ? window.selectedOffers[slug] : undefined
     });
 
-    // Add scroll listener for Sticky CTA
+    // Add scroll listener for Sticky CTA using IntersectionObserver for better performance
     const stickyCta = document.getElementById('sticky-cta');
-    if (stickyCta) {
-        window.addEventListener('scroll', () => {
-            // Show after scrolling past 500px
-            if (window.scrollY > 500) {
-                stickyCta.classList.remove('translate-y-full', 'lg:-translate-y-full');
-            } else {
-                stickyCta.classList.add('translate-y-full', 'lg:-translate-y-full');
-            }
-        });
+    const heroSection = document.querySelector('.hero-pattern');
+    
+    if (stickyCta && heroSection) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // If hero section is NOT intersecting (not visible), show sticky CTA
+                if (!entry.isIntersecting) {
+                    stickyCta.classList.remove('translate-y-full', 'lg:-translate-y-full');
+                } else {
+                    stickyCta.classList.add('translate-y-full', 'lg:-translate-y-full');
+                }
+            });
+        }, { threshold: 0.1 }); // Trigger when 10% of hero is visible/hidden
+        
+        observer.observe(heroSection);
     }
 });

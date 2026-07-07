@@ -244,7 +244,7 @@ function header() {
             <span class="hidden sm:inline">|</span>
             <span class="hidden sm:inline">✓ تأكيد قبل الشحن</span>
         </div>
-        <header class="bg-white/95 backdrop-blur-md border-b border-primary/10 sticky top-0 z-50 soft-shadow">
+        <header class="bg-white/98 border-b border-primary/10 sticky top-0 z-50 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
                 <a href="${routePrefix()}/" class="flex items-center gap-3 group">
                     <img src="${routePrefix()}/assets/brand/mizan-mark-light.png" alt="ميزاني" class="w-12 h-12 rounded-full shadow-md group-hover:scale-105 transition-transform">
@@ -271,14 +271,14 @@ function header() {
 function packMockup(product) {
     const imageSrc = routePrefix() + "/" + product.image;
     return `
-        <div class="relative bg-white/80 border border-white rounded-[2rem] p-4 sm:p-6 soft-shadow backdrop-blur-sm">
+        <div class="relative bg-white/95 border border-white rounded-[2rem] p-4 sm:p-6 soft-shadow">
             <div class="aspect-[4/5] rounded-[1.7rem] overflow-hidden bg-gradient-to-br from-secondary/80 to-cream relative flex items-center justify-center group" role="img" aria-label="صورة لمنتج ${product.name}">
                 <div class="absolute inset-0 opacity-60 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.9),transparent_28%),radial-gradient(circle_at_75%_75%,rgba(20,145,155,0.3),transparent_30%)] mix-blend-overlay"></div>
                 
-                <img src="${imageSrc}" alt="${product.name}" class="relative z-10 w-full h-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]">
+                <img src="${imageSrc}" alt="${product.name}" loading="lazy" decoding="async" class="relative z-10 w-full h-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]">
 
                 <!-- Floating Badges -->
-                <div class="absolute top-6 right-6 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl text-xs font-extrabold text-primary shadow-lg z-20 flex items-center gap-1 border border-primary/5">
+                <div class="absolute top-6 right-6 bg-white/98 px-4 py-2.5 rounded-2xl text-xs font-extrabold text-primary shadow-lg z-20 flex items-center gap-1 border border-primary/5">
                     <span class="text-accent text-base">★</span> 4.8/5
                 </div>
                 
@@ -431,7 +431,7 @@ function footer() {
 function cartDrawer() {
     return `
         <div data-cart class="fixed inset-0 z-[100] hidden">
-            <div data-cart-close class="absolute inset-0 bg-charcoal/60 backdrop-blur-sm transition-opacity"></div>
+            <div data-cart-close class="absolute inset-0 bg-charcoal/60 transition-opacity"></div>
             <aside class="absolute left-0 top-0 h-full w-full max-w-md bg-cream shadow-2xl flex flex-col transform transition-transform">
                 <div class="p-6 border-b border-primary/10 flex items-center justify-between bg-white">
                     <h3 class="text-2xl font-extrabold text-primary flex items-center gap-2">
@@ -468,7 +468,7 @@ function cartDrawer() {
         </div>
 
         <div data-checkout class="fixed inset-0 z-[110] hidden items-center justify-center p-4 sm:p-6">
-            <div data-checkout-close class="absolute inset-0 bg-charcoal/70 backdrop-blur-sm"></div>
+            <div data-checkout-close class="absolute inset-0 bg-charcoal/70"></div>
             <form id="checkout-form" novalidate class="relative bg-white rounded-[2.5rem] overflow-hidden w-full max-w-xl soft-shadow flex flex-col max-h-[90vh]">
                 <div class="bg-primary p-6 text-center relative">
                     <button type="button" data-checkout-close class="absolute left-4 top-4 w-8 h-8 rounded-full bg-white/20 text-white flex items-center justify-center hover:bg-white/30 transition">✕</button>
