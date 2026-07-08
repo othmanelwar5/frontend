@@ -753,10 +753,7 @@ function initStorefront() {
 
             let orderNumber = generateOrderNumber();
 
-            // Use the correct backend URL if testing locally
-            const endpoint = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && !configuredApiUrl
-                ? "http://localhost:8000/orders" 
-                : API_BASE + "/orders";
+            const endpoint = API_BASE + "/orders";
             console.log("[ORDER-DEBUG] step-6 fetch about to start", { endpoint: endpoint });
 
             try {
