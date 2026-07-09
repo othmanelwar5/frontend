@@ -1,13 +1,9 @@
 (function() {
-    function getApiBase() {
-        const configuredApiUrl = typeof window.MYMIZAN_API_URL === "string" ? window.MYMIZAN_API_URL.trim() : "";
-        if (!configuredApiUrl && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
-            return "http://localhost:8000";
-        }
-        return (configuredApiUrl || "https://api.mymizan.shop").replace(/\/+$/, "");
-    }
-
-    const API_BASE = getApiBase();
+    const API_BASE = (
+        typeof window.MYMIZAN_API_URL === "string" && window.MYMIZAN_API_URL.trim()
+            ? window.MYMIZAN_API_URL.trim()
+            : "https://api.mymizan.shop"
+    ).replace(/\/+$/, "");
 
     const productNames = {
         "d3-k2-gummies": "D3 + K2 Gummies",
