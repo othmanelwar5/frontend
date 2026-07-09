@@ -259,7 +259,7 @@ function header() {
                     <a href="${routePrefix()}/#why" class="hover:text-accent transition">من نحن</a>
                     <a href="${routePrefix()}/#faq" class="hover:text-accent transition">الأسئلة</a>
                 </nav>
-                <button data-cart-open class="bg-primary text-cream px-6 py-3 rounded-full text-sm font-extrabold hover:bg-primary/90 transition shadow-md flex items-center gap-2">
+                <button data-cart-open class="bg-gradient-primary text-cream px-6 py-3 rounded-full text-sm font-extrabold hover:bg-primary/90 transition-all-smooth shadow-md hover:shadow-lg hover:-translate-y-0.5 flex items-center gap-2">
                     <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                     السلة <span data-cart-count class="bg-accent text-white px-2 py-0.5 rounded-full text-xs ml-1">0</span>
                 </button>
@@ -271,7 +271,7 @@ function header() {
 function packMockup(product) {
     const imageSrc = routePrefix() + "/" + product.image;
     return `
-        <div class="relative bg-white/95 border border-white rounded-[2rem] p-4 sm:p-6 soft-shadow">
+        <div class="relative bg-white/95 border border-white rounded-[2rem] p-4 sm:p-6 card-shadow">
             <div class="aspect-[4/5] rounded-[1.7rem] overflow-hidden bg-gradient-to-br from-secondary/80 to-cream relative flex items-center justify-center group" role="img" aria-label="صورة لمنتج ${product.name}">
                 <div class="absolute inset-0 opacity-60 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.9),transparent_28%),radial-gradient(circle_at_75%_75%,rgba(20,145,155,0.3),transparent_30%)] mix-blend-overlay"></div>
                 
@@ -335,7 +335,7 @@ function renderOffersList(slug, containerId) {
 window.offerSelector = function(slug) {
     const containerId = Math.random().toString(36).substring(2, 9);
     return `
-        <div class="bg-white rounded-[2rem] p-6 sm:p-8 soft-shadow border border-primary/10 relative" id="offer-selector-container-${containerId}">
+        <div class="bg-white rounded-[2rem] p-6 sm:p-8 card-shadow border border-primary/10 relative" id="offer-selector-container-${containerId}">
             <!-- Decorative accent -->
             <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
             
@@ -445,7 +445,7 @@ function cartDrawer() {
                 
                 <div data-cart-items class="p-6 flex-1 overflow-y-auto space-y-4 bg-cream"></div>
                 
-                <div class="p-6 bg-white border-t border-primary/10 shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
+                <div class="p-6 bg-white border-t border-primary/10 card-shadow">
                     <div class="flex justify-between items-center mb-4">
                         <span class="font-bold text-muted">المجموع المبدئي</span>
                         <span class="font-extrabold text-xl text-primary" data-cart-total>0 ريال</span>
@@ -456,7 +456,7 @@ function cartDrawer() {
                         <p class="text-xs text-success-dark font-bold leading-5">أنت مؤهل للشحن المجاني والدفع عند الاستلام. نؤكد طلبك قبل الإرسال.</p>
                     </div>
                     
-                    <button data-checkout-open class="w-full bg-primary text-cream font-extrabold text-lg py-5 rounded-2xl hover:bg-primary/90 transition shadow-xl">
+                    <button data-checkout-open class="w-full bg-gradient-primary text-cream font-extrabold text-lg py-5 rounded-2xl hover:bg-primary/90 transition-all-smooth shadow-lg hover:shadow-xl hover:-translate-y-1">
                         إتمام الطلب بأمان
                     </button>
                     <div class="flex justify-center items-center gap-2 mt-4 text-xs font-bold text-muted">
@@ -468,9 +468,9 @@ function cartDrawer() {
         </div>
 
         <div data-checkout class="fixed inset-0 z-[110] hidden items-center justify-center p-4 sm:p-6">
-            <div data-checkout-close class="absolute inset-0 bg-charcoal/70"></div>
-            <form id="checkout-form" novalidate class="relative bg-white rounded-[2.5rem] overflow-hidden w-full max-w-xl soft-shadow flex flex-col max-h-[90vh]">
-                <div class="bg-primary p-6 text-center relative">
+            <div data-checkout-close class="absolute inset-0 bg-charcoal/70 backdrop-blur-sm transition-all-smooth"></div>
+            <form id="checkout-form" novalidate class="relative bg-white rounded-[2.5rem] overflow-hidden w-full max-w-xl card-shadow flex flex-col max-h-[90vh]">
+                <div class="bg-gradient-primary p-6 text-center relative">
                     <button type="button" data-checkout-close class="absolute left-4 top-4 w-8 h-8 rounded-full bg-white/20 text-white flex items-center justify-center hover:bg-white/30 transition">✕</button>
                     <h3 class="text-2xl font-extrabold text-white mb-1">خطوة أخيرة لتأكيد طلبك</h3>
                     <p class="text-sm text-cream/80 font-medium">لن تدفع شيئاً الآن - الدفع عند الاستلام</p>
@@ -505,7 +505,7 @@ function cartDrawer() {
                 </div>
 
                 <div class="p-6 sm:p-8 bg-gray-50 border-t border-gray-100">
-                    <button type="submit" id="checkout-submit-btn" class="w-full bg-primary text-cream font-extrabold text-xl py-5 rounded-2xl hover:bg-primary/90 transition shadow-xl flex items-center justify-center gap-3">
+                    <button type="submit" id="checkout-submit-btn" class="w-full bg-gradient-primary text-cream font-extrabold text-xl py-5 rounded-2xl hover:bg-primary/90 transition-all-smooth shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-3">
                         تأكيد الطلب 
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                     </button>

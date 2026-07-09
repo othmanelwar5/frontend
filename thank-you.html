@@ -38,9 +38,8 @@
             }
         }
     </script>
+    <link rel="stylesheet" href="/assets/styles.css">
     <style>
-        body { background: #F8FAFB; color: #1A2B33; }
-        .soft-shadow { box-shadow: 0 20px 60px rgba(11, 79, 108, 0.08); }
         .success-ring {
             animation: pulseRing 2s ease-out infinite;
         }
@@ -122,7 +121,7 @@
 
         <!-- Order Summary Card -->
         <section class="mb-10 fade-in-up delay-1">
-            <div class="bg-white rounded-[2rem] p-6 sm:p-8 soft-shadow border border-primary/10 relative overflow-hidden">
+            <div class="bg-white rounded-[2rem] p-6 sm:p-8 card-shadow border border-primary/10 relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-24 h-24 bg-secondary/50 rounded-bl-[4rem] -z-10"></div>
                 
                 <div class="flex justify-between items-start mb-6 relative z-10">
@@ -176,17 +175,17 @@
                 <h3 class="text-2xl lg:text-3xl font-extrabold text-primary">ماذا تتوقع من منتجات ميزاني؟</h3>
             </div>
             <div class="grid sm:grid-cols-3 gap-4">
-                <div class="bg-white rounded-2xl p-6 border border-primary/10 soft-shadow text-center">
+                <div class="bg-white rounded-2xl p-6 border border-primary/10 card-shadow text-center">
                     <div class="w-12 h-12 mx-auto bg-secondary text-primary rounded-xl flex items-center justify-center mb-4 text-xl font-extrabold">1</div>
                     <p class="font-extrabold text-primary mb-2">الأيام الأولى</p>
                     <p class="text-muted text-sm leading-relaxed">بداية الالتزام بروتين صحي ولذيذ، بدون نسيان أو كبسولات مزعجة.</p>
                 </div>
-                <div class="bg-white rounded-2xl p-6 border border-primary/10 soft-shadow text-center">
+                <div class="bg-white rounded-2xl p-6 border border-primary/10 card-shadow text-center">
                     <div class="w-12 h-12 mx-auto bg-secondary text-primary rounded-xl flex items-center justify-center mb-4 text-xl font-extrabold">2</div>
                     <p class="font-extrabold text-primary mb-2">الأسبوع الثاني</p>
                     <p class="text-muted text-sm leading-relaxed">الشعور بالفرق الإيجابي في نشاطك، هضمك، أو جودة نومك.</p>
                 </div>
-                <div class="bg-white rounded-2xl p-6 border border-primary/10 soft-shadow text-center">
+                <div class="bg-white rounded-2xl p-6 border border-primary/10 card-shadow text-center">
                     <div class="w-12 h-12 mx-auto bg-secondary text-primary rounded-xl flex items-center justify-center mb-4 text-xl font-extrabold">3</div>
                     <p class="font-extrabold text-primary mb-2">الشهر الأول</p>
                     <p class="text-muted text-sm leading-relaxed">بناء عادة صحية مستدامة تدوم معك بثقة صيدلية تامة.</p>
@@ -207,20 +206,20 @@
                 
                 <div class="grid sm:grid-cols-3 gap-4">
                     <!-- Product 1 -->
-                    <a href="/products/d3-k2-gummies/" class="bg-white rounded-2xl p-3 border border-white hover:border-primary/20 transition soft-shadow group block">
-                        <img src="/assets/products/d3-k2-gummies.webp" alt="D3 K2" class="w-full h-32 object-cover rounded-xl mb-3 group-hover:scale-105 transition duration-300">
+                    <a href="/products/d3-k2-gummies/" class="bg-white rounded-2xl p-3 border border-white hover:border-primary/20 transition-all-smooth card-shadow group block">
+                        <img src="/assets/products/d3-k2-gummies.webp" alt="D3 K2" class="w-full h-32 object-cover rounded-xl mb-3 group-hover:scale-105 transition-all-smooth">
                         <p class="font-extrabold text-primary text-sm mb-1 leading-tight">حلوى فيتامين D3 و K2</p>
                         <p class="text-xs text-muted">لطاقة ونشاط يومي</p>
                     </a>
                     <!-- Product 2 -->
-                    <a href="/products/sleep-tea/" class="bg-white rounded-2xl p-3 border border-white hover:border-primary/20 transition soft-shadow group block">
-                        <img src="/assets/products/sleep-tea.webp" alt="Sleep Tea" class="w-full h-32 object-cover rounded-xl mb-3 group-hover:scale-105 transition duration-300">
+                    <a href="/products/sleep-tea/" class="bg-white rounded-2xl p-3 border border-white hover:border-primary/20 transition-all-smooth card-shadow group block">
+                        <img src="/assets/products/sleep-tea.webp" alt="Sleep Tea" class="w-full h-32 object-cover rounded-xl mb-3 group-hover:scale-105 transition-all-smooth">
                         <p class="font-extrabold text-primary text-sm mb-1 leading-tight">شاي الأشواغاندا والمغنيسيوم</p>
                         <p class="text-xs text-muted">لنوم أعمق واسترخاء</p>
                     </a>
                     <!-- Product 3 -->
-                    <a href="/products/probiotic-fiber-gummies/" class="bg-white rounded-2xl p-3 border border-white hover:border-primary/20 transition soft-shadow group block">
-                        <img src="/assets/products/probiotic-fiber-gummies.webp" alt="Probiotic" class="w-full h-32 object-cover rounded-xl mb-3 group-hover:scale-105 transition duration-300">
+                    <a href="/products/probiotic-fiber-gummies/" class="bg-white rounded-2xl p-3 border border-white hover:border-primary/20 transition-all-smooth card-shadow group block">
+                        <img src="/assets/products/probiotic-fiber-gummies.webp" alt="Probiotic" class="w-full h-32 object-cover rounded-xl mb-3 group-hover:scale-105 transition-all-smooth">
                         <p class="font-extrabold text-primary text-sm mb-1 leading-tight">حلوى البروبيوتيك والألياف</p>
                         <p class="text-xs text-muted">لهضم مريح بدون انتفاخ</p>
                     </a>
@@ -230,7 +229,7 @@
 
         <!-- Trust Reinforcement -->
         <section class="mb-12 fade-in-up delay-4">
-            <div class="bg-white rounded-[2rem] p-6 sm:p-8 border border-primary/10 soft-shadow">
+            <div class="bg-white rounded-[2rem] p-6 sm:p-8 border border-primary/10 card-shadow">
                 <h3 class="text-lg font-extrabold text-primary mb-6 text-center">لماذا يثق الآلاف في ميزاني؟</h3>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
                     <div>
