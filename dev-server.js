@@ -86,7 +86,12 @@ const server = http.createServer((req, res) => {
             return;
         }
 
-        res.writeHead(200, { "Content-Type": types[path.extname(file).toLowerCase()] || "application/octet-stream" });
+        const ext = path.extname(file).toLowerCase();
+        const noCache = ext === ".js" || ext === ".css" || ext === ".html";
+        res.writeHead(200, {
+            "Content-Type": types[ext] || "application/octet-stream",
+            ...(noCache ? { "Cache-Control": "no-cache, no-store, must-revalidate" } : {})
+        });
         res.end(data);
     });
 });

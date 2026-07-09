@@ -804,16 +804,17 @@ function initStorefront() {
                     return;
                 }
             } catch (e) {
-                console.error("[ORDER-DEBUG] stop-5 fetch threw before response", e);
+                console.error("[ORDER-DEBUG] stop-5 fetch threw before response", { error: e, endpoint: endpoint, message: e && e.message });
                 trackStorefrontEvent("order_submit_failed", {
                     reason: "network",
+                    endpoint: endpoint,
                     total: totalSar
                 });
-                errorEl.textContent = "خطأ في الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت وتأكد أن السيرفر يعمل.";
+                errorEl.textContent = "خطأ في الاتصال بالخادم (" + endpoint + "). يرجى تحديث الصفحة والمحاولة مرة أخرى.";
                 errorEl.classList.remove("hidden");
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = 'تأكيد الطلب <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-                return; // Prevent redirect to see error
+                return;
             }
 
             console.log("[ORDER-DEBUG] step-9 redirecting after successful order", { orderNumber: orderNumber });
