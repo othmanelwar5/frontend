@@ -6,7 +6,7 @@ function renderProductPage(slug) {
     const main = document.querySelector("[data-product-page]");
 
     const productPageImage = (src, alt, aspectClass, isPriority = false) => `
-        <div class="${aspectClass} rounded-[2rem] overflow-hidden bg-white border border-primary/10 card-shadow">
+        <div class="${aspectClass} rounded-[2rem] overflow-hidden bg-white border border-primary/10 soft-shadow">
             <img
                 src="${routePrefix()}/${src}"
                 alt="${alt}"
@@ -63,7 +63,7 @@ function renderProductPage(slug) {
                         
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
                             ${product.chips.slice(0, 4).map((chip) => `
-                                <div class="bg-white/90 border border-primary/10 rounded-2xl p-4 text-center card-shadow hover:-translate-y-1 transition-transform will-change-transform">
+                                <div class="bg-white/90 border border-primary/10 rounded-2xl p-4 text-center soft-shadow hover:-translate-y-1 transition-transform will-change-transform">
                                     <div class="w-8 h-8 mx-auto bg-primary/5 rounded-full flex items-center justify-center text-primary mb-2">✓</div>
                                     <p class="text-sm font-extrabold text-primary">${chip}</p>
                                 </div>
@@ -114,7 +114,7 @@ function renderProductPage(slug) {
                 
                 <div class="grid lg:grid-cols-3 gap-6 lg:gap-8">
                     ${product.painPoints.map((point) => `
-                        <div class="bg-white rounded-[2.5rem] p-8 card-shadow border border-primary/5 flex flex-col h-full">
+                        <div class="bg-white rounded-[2.5rem] p-8 soft-shadow border border-primary/5 flex flex-col h-full">
                             <div class="mb-6 flex-1">
                                 <div class="flex items-center gap-3 mb-3">
                                     <div class="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center shrink-0">
@@ -234,7 +234,7 @@ function renderProductPage(slug) {
                 
                 <div class="grid md:grid-cols-3 gap-6">
                     ${product.reviews.map((rev) => `
-                        <div class="bg-white rounded-[2rem] p-8 border border-primary/5 card-shadow flex flex-col">
+                        <div class="bg-white rounded-[2rem] p-8 border border-primary/5 soft-shadow flex flex-col">
                             <div class="flex items-center justify-between mb-6">
                                 <div class="flex items-center gap-1 text-accent">
                                     ${Array(rev.rating).fill('★').join('')}
@@ -258,7 +258,7 @@ function renderProductPage(slug) {
                 </div>
                 
                 <div class="mt-12 text-center">
-                    <div class="inline-block px-8 py-4 bg-white rounded-2xl border border-primary/10 card-shadow">
+                    <div class="inline-block px-8 py-4 bg-white rounded-2xl border border-primary/10 soft-shadow">
                         <p class="text-primary font-bold">عشرات التقييمات الإيجابية يومياً.. التجربة خير برهان.</p>
                     </div>
                 </div>
@@ -326,7 +326,7 @@ function renderProductPage(slug) {
                 </div>
             </div>
             <div class="flex-1 lg:flex-none">
-                <button onclick="document.getElementById('product-headline').scrollIntoView({behavior: 'smooth'})" class="w-full lg:w-auto bg-gradient-primary text-cream font-extrabold text-lg lg:text-base px-8 py-4 lg:py-3 rounded-2xl shadow-xl flex items-center justify-center gap-2 hover:shadow-2xl hover:-translate-y-1 transition-all-smooth">
+                <button onclick="document.getElementById('product-headline').scrollIntoView({behavior: 'smooth'})" class="w-full lg:w-auto bg-primary text-cream font-extrabold text-lg lg:text-base px-8 py-4 lg:py-3 rounded-2xl shadow-xl flex items-center justify-center gap-2 hover:bg-primary/90 transition">
                     اطلب الآن - الدفع عند الاستلام
                 </button>
             </div>
@@ -353,6 +353,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     if (slug && window.syncOfferRadios) {
         window.syncOfferRadios(slug);
+    }
+    if (slug && products[slug] && window.MYMIZAN_PIXELS) {
+        const product = products[slug];
+        const selectedOffer = offers[getSelectedOffer(slug)];
+        window.MYMIZAN_PIXELS.trackViewContent({
+            content_id: product.sku,
+            content_name: product.name,
+            content_type: "product",
+            value: selectedOffer.numericPrice,
+            content_ids: [product.sku]
+        });
     }
     console.log("[OFFER-DEBUG] product-page:after-sync", {
         slug: slug,

@@ -593,6 +593,17 @@ function initStorefront() {
                 offer_price: selectedOffer ? selectedOffer.numericPrice : null,
                 cart_size: cart.length
             });
+            if (window.MYMIZAN_PIXELS) {
+                window.MYMIZAN_PIXELS.trackAddToCart({
+                    content_id: product.sku,
+                    content_name: product.name,
+                    content_type: "product",
+                    quantity: selectedOffer ? selectedOffer.numericQty : 1,
+                    price: selectedOffer ? selectedOffer.numericPrice : 0,
+                    value: selectedOffer ? selectedOffer.numericPrice : 0,
+                    content_ids: [product.sku]
+                });
+            }
             renderCart();
             const cartEl = document.querySelector("[data-cart]");
             if (cartEl) cartEl.classList.remove("hidden");
@@ -628,6 +639,19 @@ function initStorefront() {
                 cart_size: cart.length,
                 total: cart.reduce((sum, item) => sum + (item.offer ? item.offer.numericPrice : 0), 0)
             });
+            if (window.MYMIZAN_PIXELS) {
+                const checkoutTotal = cart.reduce((sum, item) => sum + (item.offer ? item.offer.numericPrice : 0), 0);
+                window.MYMIZAN_PIXELS.trackInitiateCheckout({
+                    value: checkoutTotal,
+                    content_ids: cart.map((item) => item.sku),
+                    contents: cart.map((item) => ({
+                        id: item.sku,
+                        quantity: item.offer ? item.offer.numericQty : 1,
+                        item_price: item.offer ? item.offer.numericPrice : 0
+                    })),
+                    num_items: cart.reduce((sum, item) => sum + (item.offer ? item.offer.numericQty : 1), 0)
+                });
+            }
             cartEl?.classList.add("hidden");
             checkoutEl?.classList.remove("hidden");
             checkoutEl?.classList.add("flex");
@@ -700,13 +724,21 @@ function initStorefront() {
                 quantity: item.offer ? item.offer.numericQty : 1
             }));
 
+            const purchaseEventId = window.MYMIZAN_PIXELS
+                ? window.MYMIZAN_PIXELS.generateEventId("purchase")
+                : ("purchase_" + Date.now().toString(36));
+            const tracking = window.MYMIZAN_PIXELS
+                ? window.MYMIZAN_PIXELS.getTrackingContext(purchaseEventId)
+                : null;
+
             const orderPayload = {
                 customer_name: customerName,
                 phone: phone,
                 city: "KSA",
                 items: items,
                 subtotal: totalSar,
-                total: totalSar
+                total: totalSar,
+                tracking: tracking
             };
 
             console.log("[ORDER-DEBUG] step-5 payload built", orderPayload);
@@ -731,11 +763,13 @@ function initStorefront() {
             function redirectToThankYou(orderNumber) {
                 const orderData = {
                     order_number: orderNumber,
+                    purchase_event_id: purchaseEventId,
                     customer_name: customerName,
                     phone: "+966" + phoneClean,
                     items: cart.map(item => ({ 
                         name: item.name, 
-                        slug: item.slug, 
+                        slug: item.slug,
+                        sku: item.sku,
                         qty: item.offer ? item.offer.numericQty : 1, 
                         price: item.offer ? item.offer.numericPrice : 0 
                     })),

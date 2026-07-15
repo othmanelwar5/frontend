@@ -26,6 +26,19 @@ loadLocalEnv();
 const port = process.env.PORT || 3000;
 const publicApiUrl = process.env.MYMIZAN_API_URL || process.env.NEXT_PUBLIC_API_URL || "";
 
+function envFlag(name, fallback) {
+    const raw = process.env[name];
+    if (raw === undefined || raw === "") return fallback;
+    return raw !== "false" && raw !== "0";
+}
+
+const pixelConfig = {
+    enabled: envFlag("NEXT_PUBLIC_ENABLE_PIXELS", envFlag("CAPI_ENABLED", true)),
+    metaPixelId: process.env.NEXT_PUBLIC_META_PIXEL_ID || process.env.META_PIXEL_ID || "",
+    tiktokPixelId: process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID || process.env.TIKTOK_PIXEL_ID || "",
+    snapPixelId: process.env.NEXT_PUBLIC_SNAP_PIXEL_ID || process.env.SNAP_PIXEL_ID || ""
+};
+
 const types = {
     ".html": "text/html; charset=utf-8",
     ".js": "text/javascript; charset=utf-8",
@@ -68,7 +81,10 @@ const server = http.createServer((req, res) => {
             "Content-Type": "text/javascript; charset=utf-8",
             "Cache-Control": "no-store"
         });
-        res.end(`window.MYMIZAN_API_URL = ${JSON.stringify(publicApiUrl)};\n`);
+        res.end(
+            `window.MYMIZAN_API_URL = ${JSON.stringify(publicApiUrl)};\n` +
+            `window.MYMIZAN_PIXEL_CONFIG = ${JSON.stringify(pixelConfig)};\n`
+        );
         return;
     }
 
