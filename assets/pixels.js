@@ -83,12 +83,15 @@
     }
 
     function initTikTok(pixelId) {
-        if (!pixelId) return;
+        if (!pixelId) return Promise.resolve();
         if (!window.ttq) {
             !function (w, d, t) {
                 w.TiktokAnalyticsObject = t;
                 var ttq = w[t] = w[t] || [];
-                ttq.methods = ["page", "track", "identify", "instances", "debug", "on", "off", "once", "ready", "alias", "group", "enableCookie", "disableCookie"];
+                ttq.methods = [
+                    "page", "track", "identify", "instances", "debug", "on", "off", "once", "ready",
+                    "alias", "group", "enableCookie", "disableCookie", "holdConsent", "revokeConsent", "grantConsent"
+                ];
                 ttq.setAndDefer = function (obj, method) {
                     obj[method] = function () {
                         obj.push([method].concat(Array.prototype.slice.call(arguments, 0)));
@@ -106,11 +109,12 @@
                 };
                 ttq.load = function (id, options) {
                     var src = "https://analytics.tiktok.com/i18n/pixel/events.js";
+                    var partner = options && options.partner;
                     ttq._i = ttq._i || {};
                     ttq._i[id] = [];
                     ttq._i[id]._u = src;
                     ttq._t = ttq._t || {};
-                    ttq._t[id] = +new Date();
+                    ttq._t[id + (partner ? "_" + partner : "")] = 1;
                     ttq._o = ttq._o || {};
                     ttq._o[id] = options || {};
                     var script = document.createElement("script");
@@ -122,7 +126,20 @@
                 };
             }(window, document, "ttq");
         }
+
         window.ttq.load(pixelId);
+        window.ttq.enableCookie();
+
+        return new Promise(function (resolve) {
+            var settled = false;
+            function finish() {
+                if (settled) return;
+                settled = true;
+                resolve();
+            }
+            window.ttq.ready(finish);
+            setTimeout(finish, 4000);
+        });
     }
 
     function initSnap(pixelId) {
@@ -150,11 +167,13 @@
         if (initPromise) return initPromise;
 
         var cfg = getConfig();
-        initPromise = Promise.resolve()
+        var tasks = [Promise.resolve()];
+        if (cfg.metaPixelId) tasks.push(Promise.resolve(initMeta(cfg.metaPixelId)));
+        if (cfg.tiktokPixelId) tasks.push(initTikTok(cfg.tiktokPixelId));
+        if (cfg.snapPixelId) tasks.push(Promise.resolve(initSnap(cfg.snapPixelId)));
+
+        initPromise = Promise.all(tasks)
             .then(function () {
-                initMeta(cfg.metaPixelId);
-                initTikTok(cfg.tiktokPixelId);
-                initSnap(cfg.snapPixelId);
                 initialized = true;
                 return true;
             })
