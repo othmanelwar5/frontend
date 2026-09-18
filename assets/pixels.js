@@ -309,16 +309,16 @@
 
     function getTrackingContext(eventId) {
         return {
-            event_id: eventId || generateEventId("purchase"),
-            page_url: window.location.href,
-            referrer: document.referrer || "",
-            fbp: readCookie("_fbp"),
-            fbc: getFbc(),
-            ttclid: getUrlParam("ttclid") || readCookie("ttclid"),
-            ttp: readCookie("_ttp"),
-            sc_click_id: getUrlParam("ScCid") || readCookie("ScCid"),
-            sc_cookie1: readCookie("_scid") || readCookie("sc_at"),
-            user_agent: navigator.userAgent || ""
+            event_id: (eventId || generateEventId("purchase")).slice(0, 120),
+            page_url: window.location.href.slice(0, 500),
+            referrer: (document.referrer || "").slice(0, 500),
+            fbp: readCookie("_fbp").slice(0, 200),
+            fbc: getFbc().slice(0, 200),
+            ttclid: (getUrlParam("ttclid") || readCookie("ttclid")).slice(0, 200),
+            ttp: readCookie("_ttp").slice(0, 200),
+            sc_click_id: (getUrlParam("ScCid") || readCookie("ScCid")).slice(0, 200),
+            sc_cookie1: (readCookie("_scid") || readCookie("sc_at")).slice(0, 200),
+            user_agent: (navigator.userAgent || "").slice(0, 500)
         };
     }
 

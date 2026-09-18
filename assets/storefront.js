@@ -682,7 +682,7 @@ function initStorefront() {
             errorEl.classList.add("hidden");
             errorEl.textContent = "";
 
-            const customerName = nameInput.value.trim();
+            const customerName = nameInput.value.trim().slice(0, 100);
             const phoneRaw = phoneInput.value.trim().replace(/\s+/g, "");
             console.log("[ORDER-DEBUG] step-3 raw form values read", {
                 hasName: !!customerName,
@@ -715,7 +715,7 @@ function initStorefront() {
 
             console.log("[ORDER-DEBUG] step-4 validation passed");
 
-            // Build E.164-compatible phone: backend accepts "+966XXXXXXXXX", "966XXXXXXXXX", "05XXXXXXXX", or "5XXXXXXXX"
+            // phoneClean is 9 digits starting with 5; backend expects "05" + 8 digits.
             const phone = "05" + phoneClean.slice(1);
             const totalSar = cart.reduce((sum, item) => sum + (item.offer ? item.offer.numericPrice : 0), 0);
 
@@ -787,56 +787,13 @@ function initStorefront() {
             const endpoint = API_BASE + "/orders";
             console.log("[ORDER-DEBUG] step-6 fetch about to start", { endpoint: endpoint });
 
+            let response;
             try {
-                const response = await fetch(endpoint, {
+                response = await fetch(endpoint, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(orderPayload)
                 });
-                
-                console.log("[ORDER-DEBUG] step-7 fetch response received", { status: response.status, ok: response.ok });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log("[ORDER-DEBUG] step-8 response json parsed", data);
-                    if (data.success && data.order_number) {
-                        orderNumber = data.order_number;
-                    }
-                    trackStorefrontEvent("order_created", {
-                        order_number: orderNumber,
-                        total: totalSar,
-                        items
-                    });
-                } else {
-                    const errText = await response.text();
-                    console.error("[ORDER-DEBUG] stop-4 backend returned non-OK", { status: response.status, body: errText });
-                    trackStorefrontEvent("order_submit_failed", {
-                        status: response.status,
-                        body: errText.slice(0, 200),
-                        total: totalSar
-                    });
-                    let userMsg = "حدث خطأ أثناء تأكيد الطلب. يرجى المحاولة مرة أخرى.";
-                    if (response.status === 403) {
-                        userMsg = "عذراً، لا يمكن إتمام الطلب من موقعك الحالي. الخدمة متاحة فقط داخل المملكة العربية السعودية.";
-                    } else if (response.status === 400) {
-                        try {
-                            const errJson = JSON.parse(errText);
-                            const detail = errJson.detail || {};
-                            if (detail.error === "invalid_product") {
-                                userMsg = "خطأ: المنتج غير موجود في قاعدة البيانات. يرجى التواصل مع الدعم.";
-                            } else if (detail.error === "total_mismatch") {
-                                userMsg = "خطأ في السعر. يرجى تحديث الصفحة والمحاولة مرة أخرى.";
-                            } else if (detail.error === "invalid_ksa_phone" || (typeof detail === "string" && detail.includes("phone"))) {
-                                userMsg = "الرجاء إدخال رقم جوال صحيح يبدأ بـ 5.";
-                            }
-                        } catch (_) {}
-                    }
-                    errorEl.textContent = userMsg;
-                    errorEl.classList.remove("hidden");
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = 'تأكيد الطلب <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-                    return;
-                }
             } catch (e) {
                 console.error("[ORDER-DEBUG] stop-5 fetch threw before response", { error: e, endpoint: endpoint, message: e && e.message });
                 trackStorefrontEvent("order_submit_failed", {
@@ -845,6 +802,54 @@ function initStorefront() {
                     total: totalSar
                 });
                 errorEl.textContent = "خطأ في الاتصال بالخادم (" + endpoint + "). يرجى تحديث الصفحة والمحاولة مرة أخرى.";
+                errorEl.classList.remove("hidden");
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'تأكيد الطلب <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                return;
+            }
+
+            console.log("[ORDER-DEBUG] step-7 fetch response received", { status: response.status, ok: response.ok });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log("[ORDER-DEBUG] step-8 response json parsed", data);
+                if (data.success && data.order_number) {
+                    orderNumber = data.order_number;
+                }
+                trackStorefrontEvent("order_created", {
+                    order_number: orderNumber,
+                    total: totalSar,
+                    items
+                });
+            } else {
+                const errText = await response.text();
+                console.error("[ORDER-DEBUG] stop-4 backend returned non-OK", { status: response.status, body: errText });
+                trackStorefrontEvent("order_submit_failed", {
+                    status: response.status,
+                    body: errText.slice(0, 200),
+                    total: totalSar
+                });
+                let userMsg = "حدث خطأ أثناء تأكيد الطلب. يرجى المحاولة مرة أخرى.";
+                if (response.status === 403) {
+                    userMsg = "عذراً، لا يمكن إتمام الطلب من موقعك الحالي. الخدمة متاحة فقط داخل المملكة العربية السعودية.";
+                } else if (response.status >= 500) {
+                    userMsg = "تعذّر إتمام الطلب بسبب خطأ في الخادم. يرجى المحاولة بعد قليل أو التواصل معنا عبر واتساب.";
+                } else if (response.status === 422) {
+                    userMsg = "تحقق من الاسم ورقم الجوال ثم حاول مرة أخرى.";
+                } else if (response.status === 400) {
+                    try {
+                        const errJson = JSON.parse(errText);
+                        const detail = errJson.detail || {};
+                        if (detail.error === "invalid_product") {
+                            userMsg = "خطأ: المنتج غير موجود في قاعدة البيانات. يرجى التواصل مع الدعم.";
+                        } else if (detail.error === "total_mismatch") {
+                            userMsg = "خطأ في السعر. يرجى تحديث الصفحة والمحاولة مرة أخرى.";
+                        } else if (detail.error === "invalid_ksa_phone" || (typeof detail === "string" && detail.includes("phone"))) {
+                            userMsg = "الرجاء إدخال رقم جوال صحيح يبدأ بـ 5.";
+                        }
+                    } catch (_) {}
+                }
+                errorEl.textContent = userMsg;
                 errorEl.classList.remove("hidden");
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = 'تأكيد الطلب <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
