@@ -8,6 +8,7 @@ COPY product-page-cro.html .
 COPY thank-you.html .
 COPY assets/ ./assets/
 COPY products/ ./products/
+COPY admin/ ./admin/
 
 ENV PORT=3000
 ENV HOST=0.0.0.0
