@@ -318,3 +318,167 @@ body {
     from { transform: translateX(100%); opacity: 0.5; }
     to   { transform: translateX(0);    opacity: 1; }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   PROFIT CALCULATOR COMPONENTS
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Calc input wrapper ─────────────────────────────────────── */
+.calc-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.calc-label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #5C7280;
+    margin-bottom: 0.4rem;
+}
+
+.calc-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.calc-prefix,
+.calc-suffix {
+    position: absolute;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #5C7280;
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+}
+
+.calc-prefix { left: 0.875rem; }
+.calc-suffix { right: 0.875rem; }
+
+.calc-input {
+    width: 100%;
+    min-height: 2.625rem;
+    border: 1px solid rgba(11, 79, 108, 0.14);
+    border-radius: 0.875rem;
+    background: #F8FAFB;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #1A2B33;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    -moz-appearance: textfield;
+}
+
+.calc-input::-webkit-outer-spin-button,
+.calc-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.calc-input:focus {
+    border-color: #14919B;
+    box-shadow: 0 0 0 3px rgba(20,145,155,0.12);
+    background: #fff;
+}
+
+/* ── Ops cost row ────────────────────────────────────────────── */
+.calc-ops-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(11,79,108,0.06);
+}
+.calc-ops-row:last-child { border-bottom: none; }
+
+/* ── Order flow ──────────────────────────────────────────────── */
+.calc-flow-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.calc-flow-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ── Breakeven cards ─────────────────────────────────────────── */
+.calc-be-card {
+    border: 1px solid rgba(11,79,108,0.10);
+    border-radius: 1.25rem;
+    background: #fff;
+    padding: 1.25rem;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.calc-be-label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #5C7280;
+    margin-bottom: 0.5rem;
+}
+
+.calc-be-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #0B4F6C;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+}
+
+.calc-be-vs {
+    min-height: 1.4rem;
+}
+
+/* Breakeven card states */
+.calc-be-card.be-ok {
+    border-color: rgba(21,128,61,0.25);
+    background: rgba(21,128,61,0.04);
+}
+.calc-be-card.be-ok .calc-be-value { color: #15803D; }
+
+.calc-be-card.be-warn {
+    border-color: rgba(180,83,9,0.25);
+    background: rgba(180,83,9,0.04);
+}
+.calc-be-card.be-warn .calc-be-value { color: #B45309; }
+
+.calc-be-card.be-impossible {
+    border-color: rgba(185,28,28,0.25);
+    background: rgba(185,28,28,0.04);
+}
+.calc-be-card.be-impossible .calc-be-value { color: #B91C1C; }
+
+/* ── KPI strip cards ─────────────────────────────────────────── */
+.calc-kpi-card {
+    border: 1px solid rgba(11,79,108,0.08);
+    border-radius: 1rem;
+    background: #fff;
+    padding: 1rem 1.125rem;
+}
+
+.calc-kpi-label {
+    display: block;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #5C7280;
+    margin-bottom: 0.375rem;
+}
+
+.calc-kpi-value {
+    display: block;
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: #0B4F6C;
+    letter-spacing: -0.02em;
+}

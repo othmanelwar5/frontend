@@ -1027,6 +1027,7 @@
         orders:   "Orders",
         products: "Products",
         traffic:  "Traffic Quality",
+        profit:   "Profit Calculator",
     };
 
     function switchTab(tab) {
@@ -1039,6 +1040,309 @@
         });
         if (els["page-title"]) els["page-title"].textContent = TAB_TITLES[tab] || tab;
         closeSidebar();
+        if (tab === "profit") initProfitCalculator();
+    }
+
+    /* ── Profit Calculator ───────────────────────────────────────────────────── */
+
+    let profitBound = false;
+
+    function initProfitCalculator() {
+        // Auto-fill AOV from dashboard on first open
+        if (!profitBound) {
+            profitBound = true;
+            const calcInputIds = [
+                "calc-aov-sar", "calc-fx", "calc-leads", "calc-cpl",
+                "calc-conf-rate", "calc-del-rate", "calc-cogs", "calc-unit-price-sar",
+                "calc-cost-confirm", "calc-cost-fulfill", "calc-cost-delivery", "calc-cost-return",
+            ];
+            calcInputIds.forEach(id => {
+                const el = $(id);
+                if (el) el.addEventListener("input", runCalc);
+            });
+        }
+
+        // Seed AOV from dashboard if available and field is empty
+        const aovField = $("calc-aov-sar");
+        if (aovField && !aovField.value && state.dashboard) {
+            const aovSar = Math.round(state.dashboard.metrics.aov || 0);
+            if (aovSar > 0) aovField.value = aovSar;
+        }
+
+        runCalc();
+    }
+
+    function getCalcNum(id, fallback = 0) {
+        const el = $(id);
+        if (!el) return fallback;
+        const v = parseFloat(el.value);
+        return isFinite(v) ? v : fallback;
+    }
+
+    function runCalc() {
+        // ── Read inputs ──────────────────────────────────────────────────────
+        const aovSar      = getCalcNum("calc-aov-sar");
+        const fx          = getCalcNum("calc-fx", 3.75);
+        const leads       = getCalcNum("calc-leads");
+        const cpl         = getCalcNum("calc-cpl");
+        const confRatePct = getCalcNum("calc-conf-rate");
+        const delRatePct  = getCalcNum("calc-del-rate");
+        const cogs        = getCalcNum("calc-cogs");         // $ per confirmed/shipped order
+        const unitPriceSar= getCalcNum("calc-unit-price-sar");
+
+        const costConfirm = getCalcNum("calc-cost-confirm", 2.50);
+        const costFulfill = getCalcNum("calc-cost-fulfill",  1.00);
+        const costDelivery= getCalcNum("calc-cost-delivery", 6.00);
+        const costReturn  = getCalcNum("calc-cost-return",   1.50);
+
+        // ── Derived base ─────────────────────────────────────────────────────
+        const aovUsd    = fx > 0 ? aovSar / fx : 0;
+        const confRate  = confRatePct / 100;
+        const delRate   = delRatePct  / 100;
+        const retRate   = Math.max(0, 1 - delRate);
+
+        const confirmed = leads * confRate;
+        const delivered = confirmed * delRate;
+        const returned  = confirmed * retRate;
+
+        // Avg items (optional, informational)
+        const avgItems = (unitPriceSar > 0 && aovSar > 0)
+            ? (aovSar / unitPriceSar).toFixed(1)
+            : null;
+
+        // ── Update display ───────────────────────────────────────────────────
+        setText($("calc-aov-usd-display"), aovUsd > 0 ? `$${aovUsd.toFixed(2)}` : "—");
+        setText($("calc-avg-items-display"), avgItems ? `${avgItems} items` : "—");
+
+        // Order flow
+        setText($("flow-leads"),     leads     > 0 ? fmtNumber(leads)     : "—");
+        setText($("flow-confirmed"), confirmed > 0 ? fmtNumber(Math.round(confirmed)) : "—");
+        setText($("flow-delivered"), delivered > 0 ? fmtNumber(Math.round(delivered)) : "—");
+        setText($("flow-returned"),  returned  > 0 ? fmtNumber(Math.round(returned))  : "—");
+
+        // ── Revenue & costs ──────────────────────────────────────────────────
+        const revenue       = delivered * aovUsd;
+        const adSpend       = leads * cpl;
+        const callCenterCost= confirmed * costConfirm;
+        const fulfillCost   = confirmed * costFulfill;   // all shipped
+        const deliveryCost  = delivered * costDelivery;
+        const returnCost    = returned  * costReturn;
+        const cogsCost      = confirmed * cogs;           // COGS on all shipped orders
+
+        const totalCost = adSpend + callCenterCost + fulfillCost + deliveryCost + returnCost + cogsCost;
+        const netProfit = revenue - totalCost;
+        const margin    = revenue > 0 ? netProfit / revenue : 0;
+        const roi       = adSpend > 0 ? netProfit / adSpend : 0;
+        const profitPerOrder  = delivered > 0 ? netProfit / delivered : 0;
+        const costPerOrder    = delivered > 0 ? totalCost / delivered : 0;
+
+        // ── Breakeven calculations ────────────────────────────────────────────
+        // Breakeven CPL (per lead):
+        //   cpl_be = conf × [del × (aov - costDelivery + costReturn) - costReturn - (costConfirm + costFulfill + cogs)]
+        const denomCommon = delRate * (aovUsd - costDelivery + costReturn) - costReturn - (costConfirm + costFulfill + cogs);
+        const cplBe   = confRate * denomCommon;
+
+        // Breakeven confirmation rate:
+        //   conf_be = cpl / denomCommon  (same denominator)
+        const confBe  = denomCommon !== 0 ? cpl / denomCommon : null;
+
+        // Breakeven delivery rate:
+        //   del_be × (aovUsd - costDelivery + costReturn) = cpl/conf + (costConfirm + costFulfill + cogs) + costReturn
+        const aovAdj = aovUsd - costDelivery + costReturn;  // net AOV after delivery/return costs
+        const delBe  = (confRate > 0 && aovAdj > 0)
+            ? (cpl / confRate + costConfirm + costFulfill + cogs + costReturn) / aovAdj
+            : null;
+
+        // ── Render breakeven section ─────────────────────────────────────────
+        renderBreakeven({
+            cplBe, cpl, confBe, confRate, delBe, delRate,
+            hasInputs: leads > 0 || cpl > 0 || aovUsd > 0,
+        });
+
+        // ── Render P&L ───────────────────────────────────────────────────────
+        renderPnL({
+            revenue, adSpend, callCenterCost, fulfillCost,
+            deliveryCost, returnCost, cogsCost,
+            totalCost, netProfit, margin, roi,
+            profitPerOrder, costPerOrder,
+            leads, confirmed, delivered, returned,
+        });
+    }
+
+    function renderBreakeven({ cplBe, cpl, confBe, confRate, delBe, delRate, hasInputs }) {
+        if (!hasInputs) {
+            ["be-cpl", "be-conf", "be-del"].forEach(id => setText($(id), "—"));
+            ["be-cpl-vs", "be-conf-vs", "be-del-vs"].forEach(id => setText($(id), ""));
+            ["be-cpl-card", "be-conf-card", "be-del-card"].forEach(id => {
+                const el = $(id);
+                if (el) el.className = "calc-be-card";
+            });
+            return;
+        }
+
+        // CPL breakeven
+        const cplBeEl    = $("be-cpl");
+        const cplVsEl    = $("be-cpl-vs");
+        const cplCardEl  = $("be-cpl-card");
+        if (cplBe !== null && isFinite(cplBe)) {
+            setText(cplBeEl, cplBe > 0 ? `$${cplBe.toFixed(2)}` : "Not viable");
+            const cplAbove = cplBe > 0 && cpl <= cplBe && cpl > 0;
+            const cplProfit = cplBe > 0 && cpl > 0;
+            if (cplVsEl) {
+                cplVsEl.innerHTML = cpl > 0
+                    ? `<span class="${cplAbove ? "text-success" : "text-danger"} font-extrabold text-sm">
+                        ${cplAbove ? "✓" : "✗"} Your CPL: $${cpl.toFixed(2)}
+                        <span class="font-bold text-xs"> (${cplAbove ? "below max" : "above max ⚠"})</span>
+                       </span>`
+                    : "";
+            }
+            if (cplCardEl) {
+                cplCardEl.className = `calc-be-card ${cplBe <= 0 ? "be-impossible" : cplAbove ? "be-ok" : cpl === 0 ? "" : "be-warn"}`;
+            }
+        }
+
+        // Confirmation rate breakeven
+        const confBeEl   = $("be-conf");
+        const confVsEl   = $("be-conf-vs");
+        const confCardEl = $("be-conf-card");
+        if (confBe !== null && isFinite(confBe) && confBe > 0) {
+            const confBePct = confBe * 100;
+            setText(confBeEl, confBePct <= 100 ? `${confBePct.toFixed(1)}%` : "> 100% — not viable");
+            const confOk = confRate >= confBe && confBePct <= 100;
+            if (confVsEl) {
+                confVsEl.innerHTML = confRate > 0
+                    ? `<span class="${confOk ? "text-success" : "text-danger"} font-extrabold text-sm">
+                        ${confOk ? "✓" : "✗"} Your rate: ${(confRate * 100).toFixed(1)}%
+                       </span>`
+                    : "";
+            }
+            if (confCardEl) {
+                confCardEl.className = `calc-be-card ${confBePct > 100 ? "be-impossible" : confOk ? "be-ok" : confRate === 0 ? "" : "be-warn"}`;
+            }
+        } else {
+            setText(confBeEl, confBe !== null && confBe <= 0 ? "Any rate works" : "—");
+            if (confCardEl) confCardEl.className = "calc-be-card be-ok";
+        }
+
+        // Delivery rate breakeven
+        const delBeEl    = $("be-del");
+        const delVsEl    = $("be-del-vs");
+        const delCardEl  = $("be-del-card");
+        if (delBe !== null && isFinite(delBe) && delBe > 0) {
+            const delBePct = delBe * 100;
+            setText(delBeEl, delBePct <= 100 ? `${delBePct.toFixed(1)}%` : "> 100% — not viable");
+            const delOk = delRate >= delBe && delBePct <= 100;
+            if (delVsEl) {
+                delVsEl.innerHTML = delRate > 0
+                    ? `<span class="${delOk ? "text-success" : "text-danger"} font-extrabold text-sm">
+                        ${delOk ? "✓" : "✗"} Your rate: ${(delRate * 100).toFixed(1)}%
+                       </span>`
+                    : "";
+            }
+            if (delCardEl) {
+                delCardEl.className = `calc-be-card ${delBePct > 100 ? "be-impossible" : delOk ? "be-ok" : delRate === 0 ? "" : "be-warn"}`;
+            }
+        } else {
+            setText(delBeEl, delBe !== null && delBe <= 0 ? "Any rate works" : "—");
+            if (delCardEl) delCardEl.className = "calc-be-card be-ok";
+        }
+    }
+
+    function renderPnL({
+        revenue, adSpend, callCenterCost, fulfillCost,
+        deliveryCost, returnCost, cogsCost,
+        totalCost, netProfit, margin, roi,
+        profitPerOrder, costPerOrder,
+        leads, confirmed, delivered, returned,
+    }) {
+        const profitable = netProfit >= 0;
+        const hasData    = revenue > 0 || totalCost > 0;
+
+        // Headline
+        const headlineEl = $("pnl-net-profit");
+        if (headlineEl) {
+            headlineEl.textContent = hasData ? fmtUsd(netProfit) : "—";
+            headlineEl.className = `text-3xl font-extrabold tracking-tight mt-1 ${
+                !hasData ? "text-primary" : profitable ? "text-success" : "text-danger"
+            }`;
+        }
+
+        const badgeEl = $("pnl-margin-badge");
+        if (badgeEl) {
+            badgeEl.textContent = hasData ? `${(margin * 100).toFixed(1)}% margin` : "";
+            badgeEl.className = `mt-1 text-xs font-bold ${profitable ? "text-success" : "text-danger"}`;
+        }
+
+        // Revenue row
+        setText($("pnl-revenue"), hasData ? fmtUsd(revenue) : "—");
+
+        // Cost rows
+        const costRowsEl = $("pnl-cost-rows");
+        if (costRowsEl) {
+            const rows = [
+                { label: "Ad spend",            note: `${fmtNumber(leads)} leads × $${getCalcNum("calc-cpl").toFixed(2)} CPL`,                        amount: adSpend       },
+                { label: "Call center",         note: `${fmtNumber(Math.round(confirmed))} confirmed × $${getCalcNum("calc-cost-confirm").toFixed(2)}`,amount: callCenterCost},
+                { label: "Fulfillment",         note: `${fmtNumber(Math.round(confirmed))} shipped × $${getCalcNum("calc-cost-fulfill").toFixed(2)}`,  amount: fulfillCost   },
+                { label: "Delivery fee",        note: `${fmtNumber(Math.round(delivered))} delivered × $${getCalcNum("calc-cost-delivery").toFixed(2)}`,amount: deliveryCost  },
+                { label: "Return fee",          note: `${fmtNumber(Math.round(returned))} returned × $${getCalcNum("calc-cost-return").toFixed(2)}`,   amount: returnCost    },
+                { label: "COGS",                note: `${fmtNumber(Math.round(confirmed))} shipped × $${getCalcNum("calc-cogs").toFixed(2)}`,          amount: cogsCost      },
+            ];
+            costRowsEl.innerHTML = rows.map(row => {
+                const pct = revenue > 0 ? ((row.amount / revenue) * 100).toFixed(1) : "—";
+                return `
+                    <div class="grid grid-cols-12 items-center gap-3 px-5 py-3">
+                        <div class="col-span-5">
+                            <span class="text-sm font-semibold text-charcoal">${esc(row.label)}</span>
+                            <p class="text-[10px] font-semibold text-muted mt-0.5">${esc(row.note)}</p>
+                        </div>
+                        <span class="col-span-3 text-right text-sm font-bold text-charcoal">(${fmtUsd(row.amount)})</span>
+                        <div class="col-span-4 flex items-center justify-end gap-2">
+                            <div class="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
+                                <div class="h-full bg-primary/40 rounded-full" style="width:${Math.min(100, parseFloat(pct) || 0)}%"></div>
+                            </div>
+                            <span class="text-[10px] font-bold text-muted w-10 text-right">${pct}%</span>
+                        </div>
+                    </div>`;
+            }).join("");
+        }
+
+        // Total cost
+        const totalPct = revenue > 0 ? ((totalCost / revenue) * 100).toFixed(1) : "—";
+        setText($("pnl-total-cost"),     hasData ? `(${fmtUsd(totalCost)})`  : "—");
+        setText($("pnl-total-cost-pct"), hasData ? `${totalPct}% of revenue` : "—");
+
+        // Net profit row
+        const netRowEl  = $("pnl-net-profit-row");
+        const margRowEl = $("pnl-margin-row");
+        if (netRowEl) {
+            netRowEl.textContent = hasData ? fmtUsd(netProfit) : "—";
+            netRowEl.className = `col-span-3 text-right text-base font-extrabold ${profitable ? "text-success" : "text-danger"}`;
+        }
+        if (margRowEl) {
+            margRowEl.textContent = hasData ? `${(margin * 100).toFixed(1)}% margin` : "—";
+            margRowEl.className = `col-span-4 text-right text-sm font-extrabold ${profitable ? "text-success" : "text-danger"}`;
+        }
+        const netRow = $("pnl-net-row");
+        if (netRow) {
+            netRow.className = `grid grid-cols-12 items-center gap-3 px-5 py-4 border-t-2 ${profitable ? "border-success/20 bg-success/4" : "border-danger/20 bg-danger/4"}`;
+        }
+
+        // KPI strip
+        setText($("kpi-margin"),           hasData ? `${(margin * 100).toFixed(1)}%`          : "—");
+        setText($("kpi-roi"),              hasData ? `${(roi * 100).toFixed(0)}%`              : "—");
+        setText($("kpi-profit-per-order"), hasData ? fmtUsd(profitPerOrder)                    : "—");
+        setText($("kpi-cost-per-order"),   hasData ? fmtUsd(costPerOrder)                      : "—");
+
+        ["kpi-margin", "kpi-roi", "kpi-profit-per-order"].forEach(id => {
+            const el = $(id);
+            if (el) el.className = `calc-kpi-value ${profitable ? "text-success" : "text-danger"}`;
+        });
+    }
+
+    function fmtUsd(v) {
+        const n = num(v);
+        const sign = n < 0 ? "-" : "";
+        return `${sign}$${Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
     }
 
     /* ── Auth ───────────────────────────────────────────────────────────────── */
